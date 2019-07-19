@@ -2,10 +2,8 @@ package com.example.upload;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,10 +16,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.exifinterface.media.ExifInterface;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class UpLoadImage extends AppCompatActivity implements Button.OnClickListener{
     public String UPLOAD_URL;
@@ -173,6 +171,7 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
             }
         }
 
-        new Process().execute(rotatedBitmap);
+        //new Process().execute(rotatedBitmap);
+        new Process().execute(bitmap);
     }
 }
