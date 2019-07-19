@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -83,11 +83,21 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
 
             filePath = data.getData();
             try {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                /*
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                byte[] test = bos.toByteArray();
+                ByteArrayInputStream bs = new ByteArrayInputStream(test);
+
+                ExifInterface ei = new ExifInterface(bs);
+                */
+                System.out.println(PathUtil.getPath(getApplicationContext(), filePath));
                 ExifInterface ei = new ExifInterface(PathUtil.getPath(getApplicationContext(), filePath));
                 int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                         ExifInterface.ORIENTATION_UNDEFINED);
+                System.out.println(orientation);
 
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
 
                 switch(orientation) {
                     case ExifInterface.ORIENTATION_ROTATE_90:
@@ -107,12 +117,14 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
                         rotatedBitmap = bitmap;
                 }
 
-                imageView.setImageBitmap(rotatedBitmap);
-                //imageView.setImageBitmap(bitmap);
+                bitmap = rotatedBitmap;
+                //imageView.setImageBitmap(rotatedBitmap);
+                imageView.setImageBitmap(bitmap);
+                System.out.println("success");
             } catch (IOException e) {
                 e.printStackTrace();
-            }catch (URISyntaxException e){
-                e.printStackTrace();
+            }catch (Exception e){
+                imageView.setImageBitmap(bitmap);
             }
 
         }
@@ -137,7 +149,7 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
     private void uploadImage(){
         class Process extends AsyncTask<Bitmap,Void,String>{
             ProgressDialog loading;
-            RequestHandler rh = new RequestHandler();
+            RequestHandler rh = new RequestHandler(getApplicationContext());
 
             @Override
             protected void onPreExecute() {

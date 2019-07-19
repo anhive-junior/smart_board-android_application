@@ -109,7 +109,7 @@ public class PlayWork extends AppCompatActivity implements Button.OnClickListene
     public void getproperty(final String method){
         class Process extends AsyncTask<Void,Void,HashMap> {
             ProgressDialog loading;
-            RequestHandler rh = new RequestHandler();
+            RequestHandler rh = new RequestHandler(getApplicationContext());
 
             @Override
             protected void onPreExecute() {

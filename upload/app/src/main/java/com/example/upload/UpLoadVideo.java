@@ -184,7 +184,7 @@ public class UpLoadVideo extends AppCompatActivity implements Button.OnClickList
 
             @Override
             protected String doInBackground(Void... params) {
-                RequestHandler rh = new RequestHandler();
+                RequestHandler rh = new RequestHandler(getApplicationContext());
                 //서버IP주소, 서버명령어, 메모, video 파일경로를 서버연결함수에 전달
                 String result = rh.sendPostRequest(UPLOAD_URL, UPLOAD_KEY, val_caption.getText().toString(), selectedPath);
                 return result;
@@ -206,7 +206,7 @@ public class UpLoadVideo extends AppCompatActivity implements Button.OnClickList
 
         class Process extends AsyncTask<Bitmap,Void,String>{
             ProgressDialog loading;
-            RequestHandler rh = new RequestHandler();
+            RequestHandler rh = new RequestHandler(getApplicationContext());
 
             @Override
             protected void onPreExecute() {

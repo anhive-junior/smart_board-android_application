@@ -69,7 +69,7 @@ public class ShowList extends AppCompatActivity implements DataTransferInterface
     public void showlist(final ArrayList<String[]> data){
         class Process extends AsyncTask<Void,Void,Data[]>{
             ProgressDialog loading;
-            RequestHandler rh = new RequestHandler();
+            RequestHandler rh = new RequestHandler(getApplicationContext());
 
             @Override
             protected void onPreExecute() {

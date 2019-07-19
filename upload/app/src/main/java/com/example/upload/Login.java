@@ -125,7 +125,7 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
     private void login(final String address, final String key, final String id, final String password){
         class Process extends AsyncTask<Void,Void,String> {
             ProgressDialog loading;
-            RequestHandler rh = new RequestHandler();
+            RequestHandler rh = new RequestHandler(getApplicationContext());
 
             @Override
             protected void onPreExecute() {

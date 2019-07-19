@@ -121,7 +121,7 @@ public class ManageSlide extends AppCompatActivity implements Button.OnClickList
     private void manageslide(final String msg){
         class Process extends AsyncTask<Bitmap,Void,String>{
             ProgressDialog loading;
-            RequestHandler rh = new RequestHandler();
+            RequestHandler rh = new RequestHandler(getApplicationContext());
 
             @Override
             protected void onPreExecute() {

@@ -65,7 +65,7 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
     private void showimage(final String data, final Boolean rm){
         class Process extends AsyncTask<Void,Void,Bitmap>{
             ProgressDialog loading;
-            RequestHandler rh = new RequestHandler();
+            RequestHandler rh = new RequestHandler(getApplicationContext());
 
             @Override
             protected void onPreExecute() {
