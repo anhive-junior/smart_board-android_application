@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class Login extends AppCompatActivity implements Button.OnClickListener {
+    public String test;
 
     private String UPLOAD_URL;
     private String UPLOAD_KEY;
@@ -185,6 +186,7 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
 
     public String ParseJson(String s){
         JSONObject jobject;
+        String error = s;
 
         try {
             jobject = new JSONObject(s);
@@ -194,9 +196,8 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
             return s;
         }catch (JSONException e){
             System.out.println(e);
+            return error;
         }
-
-        return "Parsing Error";
     }
 
 }

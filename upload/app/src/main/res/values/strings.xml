@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">smart board</string>
+    <string name="picture">찰칵</string>
+    <string name="upload">업로드</string>
+    <string name="cancel">취소</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
 </resources>

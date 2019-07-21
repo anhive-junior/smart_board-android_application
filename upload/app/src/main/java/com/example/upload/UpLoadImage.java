@@ -135,7 +135,7 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
                 matrix, true);
     }
 
-    public byte[] getStringImage(Bitmap bmp){
+    public static byte[] getStringImage(Bitmap bmp){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] imageBytes = baos.toByteArray();

@@ -15,9 +15,11 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         private Button buttonSlide;
         private Button buttonVideo;
         private Button buttonPlayWork;
+        private Button buttonCamera;
         private Intent in = null;
         private EditText varIP;
         private EditText varPort;
+
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             buttonSlide = (Button) findViewById(R.id.button_slide);
             buttonVideo = (Button) findViewById(R.id.button_video);
             buttonPlayWork = (Button) findViewById(R.id.button_play);
+            buttonCamera = (Button) findViewById(R.id.button_camera);
 
             buttonSet.setOnClickListener(this);
             buttonUpload.setOnClickListener(this);
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
             buttonSlide.setOnClickListener(this);
             buttonVideo.setOnClickListener(this);
             buttonPlayWork.setOnClickListener(this);
+            buttonCamera.setOnClickListener(this);
 
             varIP = (EditText) findViewById(R.id.input_ip);
             varPort = (EditText) findViewById(R.id.input_port);
@@ -67,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 break ;
             case R.id.button_play :
                 in = new Intent(getApplicationContext(), PlayWork.class);
+                break ;
+            case R.id.button_camera :
+                in = new Intent(getApplicationContext(), CameraActivity.class);
                 break ;
         }
 

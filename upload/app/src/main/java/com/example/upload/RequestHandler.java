@@ -95,7 +95,7 @@ public class RequestHandler {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response = "Connection Error";
+            return e.getMessage();
         }
 
         return response;
@@ -184,7 +184,7 @@ public class RequestHandler {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response = "Connection Error";
+            return e.getMessage();
         }
 
         return response;
@@ -232,7 +232,7 @@ public class RequestHandler {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response = "Connection Error";
+            return e.getMessage();
         }
 
         return response;
@@ -277,7 +277,8 @@ public class RequestHandler {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response = "Connection Error";
+            return e.getMessage();
+            //response = "Connection Error";
         }
 
         return response;
