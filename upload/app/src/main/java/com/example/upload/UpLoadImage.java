@@ -21,6 +21,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.exifinterface.media.ExifInterface;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.TransformationUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,7 +100,7 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
 
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                bitmap = resizeBitmapImage(bitmap, 1024);
+                //bitmap = resizeBitmapImage(bitmap, 1024);
 
                 System.out.println(PathUtil.getPath(getApplicationContext(), filePath));
                 ExifInterface ei = new ExifInterface(PathUtil.getPath(getApplicationContext(), filePath));
@@ -123,11 +127,13 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
                         break;
                 }
 
+                //Glide.with(getApplicationContext()).load(bitmap).into(imageView);
                 imageView.setImageBitmap(bitmap);
                 System.out.println("success");
             } catch (IOException e) {
                 e.printStackTrace();
             }catch (Exception e){
+                //Glide.with(getApplicationContext()).load(bitmap).into(imageView);
                 imageView.setImageBitmap(bitmap);
             }
 
@@ -271,5 +277,6 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
         img.recycle();
         return rotatedImg;
     }
+
 
 }

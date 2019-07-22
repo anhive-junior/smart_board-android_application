@@ -12,6 +12,8 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -74,16 +76,21 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
 
             @Override
             protected void onPostExecute(Bitmap s) {
-                loading.dismiss();
                 myBitmap = s;
 
                 if(rm){
                     setResult(1234);
                     finish();
                 }
+
                 else{
                     imageView = (ImageView) findViewById(R.id.imageView3);
-                    imageView.setImageBitmap(myBitmap);
+                    Glide.with(getApplicationContext())
+                            .load("http://" + data)
+                            .into(imageView);
+                    loading.dismiss();
+
+                    //imageView.setImageBitmap(myBitmap);
                 }
             }
 
@@ -94,8 +101,10 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
                 if(rm) {
                     property.add(new String[]{"card", data});
                     rh.sendPostRequest(UPLOAD_URL, property);
-                }
+                }/*
                 else {
+
+
                     try {
                         URL url = new URL("http://" + data);
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -112,7 +121,7 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
                         System.out.println(e);
                         System.out.println("errorr");
                     }
-                }
+                }*/
                 return result;
             }
         }
