@@ -60,20 +60,21 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
         buttonBack.setOnClickListener(this);
         buttonDelete.setOnClickListener(this);
 
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+        final ProgressDialog loading;
+        loading = ProgressDialog.show(ShowImage.this, "Loading", "Please wait...",true,true);
 
         Glide.with(getApplicationContext())
                 .load("http://" + intent.getExtras().getString("filepath"))
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        progressBar.setVisibility(View.GONE);
+                        loading.dismiss();
                         return false;
                     }
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        progressBar.setVisibility(View.GONE);
+                        loading.dismiss();
                         return false;
                     }
                 })
