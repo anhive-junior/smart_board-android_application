@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static com.example.upload.ShowList.resizeBitmapImage;
 import static java.lang.Boolean.TRUE;
 
 public class ShowImage extends AppCompatActivity implements Button.OnClickListener {
@@ -43,6 +44,8 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
         Intent intent = getIntent();
         showimage(intent.getExtras().getString("filepath"), Boolean.FALSE);
 
+
+        imageView = (ImageView) findViewById(R.id.imageView3);
 
         buttonBack = (Button) findViewById(R.id.button_back);
         buttonDelete = (Button) findViewById(R.id.button_delete);
@@ -76,22 +79,24 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
 
             @Override
             protected void onPostExecute(Bitmap s) {
+                //loading = ProgressDialog.show(ShowImage.this, "Loading", "Please wait...",true,true);
                 myBitmap = s;
 
                 if(rm){
                     setResult(1234);
                     finish();
                 }
-
                 else{
-                    imageView = (ImageView) findViewById(R.id.imageView3);
+
+                    /*
                     Glide.with(getApplicationContext())
                             .load("http://" + data)
                             .into(imageView);
-                    loading.dismiss();
-
-                    //imageView.setImageBitmap(myBitmap);
+                    */
+                    imageView.setImageBitmap(myBitmap);
                 }
+
+                loading.dismiss();
             }
 
             @Override
@@ -101,7 +106,7 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
                 if(rm) {
                     property.add(new String[]{"card", data});
                     rh.sendPostRequest(UPLOAD_URL, property);
-                }/*
+                }
                 else {
 
 
@@ -114,14 +119,15 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
                         connection.connect();
                         InputStream input = connection.getInputStream();
                         result = BitmapFactory.decodeStream(input);
-                        result = Bitmap.createScaledBitmap(result, 960, 960, true);
+                        //result = resizeBitmapImage(result, imageView.getMaxWidth());
+                        //result = Bitmap.createScaledBitmap(result, 960, 960, true);
                         connection.disconnect();
 
                     } catch (IOException e) {
                         System.out.println(e);
                         System.out.println("errorr");
                     }
-                }*/
+                }
                 return result;
             }
         }
