@@ -32,6 +32,7 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -62,11 +63,16 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -96,6 +102,7 @@ public class Camera2BasicFragment extends Fragment
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
+    private Bitmap bitmap;
 
     public String UPLOAD_URL;
     public static final String UPLOAD_KEY = "sendcard";
@@ -445,12 +452,12 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        UPLOAD_URL = ((GlobalVar)getActivity().getApplication()).getMyAddr() + "/signage/s00_signage.php";
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
+        UPLOAD_URL = ((GlobalVar)getActivity().getApplication()).getMyAddr() + "/signage/s00_signage.php";
         view.findViewById(R.id.picture).setOnClickListener(this);
         view.findViewById(R.id.upload).setOnClickListener(this);
         view.findViewById(R.id.cancel).setOnClickListener(this);
@@ -927,10 +934,31 @@ public class Camera2BasicFragment extends Fragment
                 picture.setVisibility(View.VISIBLE);
                 afterpicture.setVisibility(View.GONE);
 
+                long start = System.currentTimeMillis();
+
+                final ProgressDialog loading;
+                loading = ProgressDialog.show(getContext(), "Uploading Image", "Please wait...",true,true);
+
+                Glide.with(getActivity())
+                        .asBitmap()
+                        .load(mFile.getAbsolutePath())
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                System.out.println(UPLOAD_URL);
+                                bitmap = resource;
+                                uploadImage(bitmap, loading);
+                            }
+
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                            }
+                        });
+                /*
+
                 BitmapFactory.Options bmOptions = new BitmapFactory.Options();
                 Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(), bmOptions);
-                bitmap = resizeBitmapImage(bitmap, 1024);
-
+                //bitmap = resizeBitmapImage(bitmap, 1024);
                 try {
                     ExifInterface ei = new ExifInterface(mFile.getAbsolutePath());
                     int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
@@ -961,8 +989,12 @@ public class Camera2BasicFragment extends Fragment
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+                */
 
-                uploadImage(bitmap);
+                long end = System.currentTimeMillis();
+                System.out.println((end - start)/1000.0);
+
+
                 unlockFocus();
                 break;
             case R.id.cancel:
@@ -1104,14 +1136,14 @@ public class Camera2BasicFragment extends Fragment
 
 
 
-    private void uploadImage(final Bitmap bitmap){
+    private void uploadImage(final Bitmap bitmap, final ProgressDialog loading){
         class Process extends AsyncTask<Bitmap,Void,String> {
-            ProgressDialog loading;
+            //ProgressDialog loading;
             RequestHandler rh = new RequestHandler(getActivity().getApplicationContext());
 
             @Override
             protected void onPreExecute() {
-                loading = ProgressDialog.show(getContext(), "Uploading Image", "Please wait...",true,true);
+                //loading = ProgressDialog.show(getContext(), "Uploading Image", "Please wait...",true,true);
             }
 
             @Override

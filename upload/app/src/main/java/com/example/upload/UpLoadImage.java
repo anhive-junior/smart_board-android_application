@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -19,12 +20,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -99,7 +108,9 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
             }
             imageView.setImageBitmap(bitmap);*/
 
+
             long start = System.currentTimeMillis();
+            /*
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 bitmap = resizeBitmapImage(bitmap, 1024);
@@ -137,9 +148,30 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
             }catch (Exception e){
                 //Glide.with(getApplicationContext()).load(bitmap).into(imageView);
                 imageView.setImageBitmap(bitmap);
-            }
+            }*/
+            final ProgressDialog loading;
+            loading = ProgressDialog.show(UpLoadImage.this, "Loading", "Please wait...",true,true);
+
+            Glide.with(this)
+                    .asBitmap()
+                    .load(filePath)
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            imageView.setImageBitmap(resource);
+                            loading.dismiss();
+                            bitmap = resource;
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            loading.dismiss();
+                        }
+                    });
+
             long end = System.currentTimeMillis();
             System.out.println((end - start)/1000.0);
+
 
         }
     }
