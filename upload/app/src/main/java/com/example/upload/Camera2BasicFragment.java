@@ -107,6 +107,9 @@ public class Camera2BasicFragment extends Fragment
     public String UPLOAD_URL;
     public static final String UPLOAD_KEY = "sendcard";
 
+    private long start;
+    private long end;
+
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
         ORIENTATIONS.append(Surface.ROTATION_90, 0);
@@ -934,11 +937,13 @@ public class Camera2BasicFragment extends Fragment
                 picture.setVisibility(View.VISIBLE);
                 afterpicture.setVisibility(View.GONE);
 
-                long start = System.currentTimeMillis();
+                start = System.currentTimeMillis();
+
 
                 final ProgressDialog loading;
                 loading = ProgressDialog.show(getContext(), "Uploading Image", "Please wait...",true,true);
 
+                /*
                 Glide.with(getActivity())
                         .asBitmap()
                         .load(mFile.getAbsolutePath())
@@ -947,6 +952,8 @@ public class Camera2BasicFragment extends Fragment
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                 System.out.println(UPLOAD_URL);
                                 bitmap = resource;
+                                end = System.currentTimeMillis();
+                                System.out.println((end - start)/1000.0);
                                 uploadImage(bitmap, loading);
                             }
 
@@ -954,7 +961,7 @@ public class Camera2BasicFragment extends Fragment
                             public void onLoadCleared(@Nullable Drawable placeholder) {
                             }
                         });
-                /*
+                */
 
                 BitmapFactory.Options bmOptions = new BitmapFactory.Options();
                 Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(), bmOptions);
@@ -989,11 +996,10 @@ public class Camera2BasicFragment extends Fragment
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                */
+                uploadImage(bitmap, loading);
 
-                long end = System.currentTimeMillis();
+                end = System.currentTimeMillis();
                 System.out.println((end - start)/1000.0);
-
 
                 unlockFocus();
                 break;

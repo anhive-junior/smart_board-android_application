@@ -53,6 +53,9 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
     private Bitmap bitmap;
     private Uri filePath;
 
+    private long start;
+    private long end;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,7 +112,7 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
             imageView.setImageBitmap(bitmap);*/
 
 
-            long start = System.currentTimeMillis();
+            start = System.currentTimeMillis();
             /*
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
@@ -140,7 +143,6 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
                         break;
                 }
 
-                //Glide.with(getApplicationContext()).load(bitmap).into(imageView);
                 imageView.setImageBitmap(bitmap);
                 System.out.println("success");
             } catch (IOException e) {
@@ -161,6 +163,8 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
                             imageView.setImageBitmap(resource);
                             loading.dismiss();
                             bitmap = resource;
+                            end = System.currentTimeMillis();
+                            System.out.println((end - start)/1000.0);
                         }
 
                         @Override
@@ -169,9 +173,9 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
                         }
                     });
 
-            long end = System.currentTimeMillis();
-            System.out.println((end - start)/1000.0);
 
+            end = System.currentTimeMillis();
+            System.out.println((end - start)/1000.0);
 
         }
     }

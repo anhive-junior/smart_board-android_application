@@ -40,6 +40,9 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
     private Button buttonBack;
     private ArrayList<String[]> property;
 
+    private long start;
+    private long end;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +52,6 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
 
         UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
         Intent intent = getIntent();
-        //showimage(intent.getExtras().getString("filepath"), Boolean.FALSE);
 
 
         imageView = (ImageView) findViewById(R.id.imageView3);
@@ -60,6 +62,10 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
         buttonBack.setOnClickListener(this);
         buttonDelete.setOnClickListener(this);
 
+
+        start = System.currentTimeMillis();
+        //showimage(intent.getExtras().getString("filepath"), Boolean.FALSE);
+
         final ProgressDialog loading;
         loading = ProgressDialog.show(ShowImage.this, "Loading", "Please wait...",true,true);
 
@@ -69,6 +75,9 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         loading.dismiss();
+
+                        end = System.currentTimeMillis();
+                        System.out.println((end - start)/1000.0);
                         return false;
                     }
 
@@ -79,6 +88,7 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
                     }
                 })
                 .into(imageView);
+
     }
 
     @Override
@@ -106,7 +116,6 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
 
             @Override
             protected void onPostExecute(Bitmap s) {
-                //loading = ProgressDialog.show(ShowImage.this, "Loading", "Please wait...",true,true);
                 myBitmap = s;
 
                 if(rm){
@@ -114,16 +123,13 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
                     finish();
                 }
                 else{
-
-                    /*
-                    Glide.with(getApplicationContext())
-                            .load("http://" + data)
-                            .into(imageView);
-                    */
                     imageView.setImageBitmap(myBitmap);
                 }
 
                 loading.dismiss();
+
+                end = System.currentTimeMillis();
+                System.out.println((end - start)/1000.0);
             }
 
             @Override
