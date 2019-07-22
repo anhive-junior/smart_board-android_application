@@ -1,11 +1,14 @@
 package com.example.upload;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -20,6 +23,9 @@ import androidx.exifinterface.media.ExifInterface;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
+import static com.example.upload.ShowList.resizeBitmapImage;
 
 public class UpLoadImage extends AppCompatActivity implements Button.OnClickListener{
     public String UPLOAD_URL;
@@ -31,7 +37,6 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
     private EditText val_caption;
     private ImageView imageView;
     private Bitmap bitmap;
-    private Bitmap rotatedBitmap;
     private Uri filePath;
 
     @Override
@@ -80,16 +85,19 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
             filePath = data.getData();
+
+            /*
+            try {
+                bitmap = handleSamplingAndRotationBitmap(getApplicationContext(), data.getData());
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            imageView.setImageBitmap(bitmap);*/
+
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                /*
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                byte[] test = bos.toByteArray();
-                ByteArrayInputStream bs = new ByteArrayInputStream(test);
+                bitmap = resizeBitmapImage(bitmap, 1024);
 
-                ExifInterface ei = new ExifInterface(bs);
-                */
                 System.out.println(PathUtil.getPath(getApplicationContext(), filePath));
                 ExifInterface ei = new ExifInterface(PathUtil.getPath(getApplicationContext(), filePath));
                 int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
@@ -99,24 +107,22 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
 
                 switch(orientation) {
                     case ExifInterface.ORIENTATION_ROTATE_90:
-                        rotatedBitmap = rotateImage(bitmap, 90);
+                        bitmap = rotateImage(bitmap, 90);
                         break;
 
                     case ExifInterface.ORIENTATION_ROTATE_180:
-                        rotatedBitmap = rotateImage(bitmap, 180);
+                        bitmap = rotateImage(bitmap, 180);
                         break;
 
                     case ExifInterface.ORIENTATION_ROTATE_270:
-                        rotatedBitmap = rotateImage(bitmap, 270);
+                        bitmap = rotateImage(bitmap, 270);
                         break;
 
                     case ExifInterface.ORIENTATION_NORMAL:
                     default:
-                        rotatedBitmap = bitmap;
+                        break;
                 }
 
-                bitmap = rotatedBitmap;
-                //imageView.setImageBitmap(rotatedBitmap);
                 imageView.setImageBitmap(bitmap);
                 System.out.println("success");
             } catch (IOException e) {
@@ -174,4 +180,96 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
         //new Process().execute(rotatedBitmap);
         new Process().execute(bitmap);
     }
+
+
+    public static Bitmap handleSamplingAndRotationBitmap(Context context, Uri selectedImage)
+            throws IOException {
+        int MAX_HEIGHT = 1024;
+        int MAX_WIDTH = 1024;
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        InputStream imageStream = context.getContentResolver().openInputStream(selectedImage);
+        BitmapFactory.decodeStream(imageStream, null, options);
+        imageStream.close();
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, MAX_WIDTH, MAX_HEIGHT);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        imageStream = context.getContentResolver().openInputStream(selectedImage);
+        Bitmap img = BitmapFactory.decodeStream(imageStream, null, options);
+
+        img = rotateImageIfRequired(context, img, selectedImage);
+        return img;
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options,
+                                             int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will guarantee a final image
+            // with both dimensions larger than or equal to the requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+
+            // This offers some additional logic in case the image has a strange
+            // aspect ratio. For example, a panorama may have a much larger
+            // width than height. In these cases the total pixels might still
+            // end up being too large to fit comfortably in memory, so we should
+            // be more aggressive with sample down the image (=larger inSampleSize).
+
+            final float totalPixels = width * height;
+
+            // Anything more than 2x the requested pixels we'll sample down further
+            final float totalReqPixelsCap = reqWidth * reqHeight * 2;
+
+            while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+                inSampleSize++;
+            }
+        }
+        return inSampleSize;
+    }
+
+    private static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri selectedImage) throws IOException {
+
+        InputStream input = context.getContentResolver().openInputStream(selectedImage);
+        ExifInterface ei;
+        if (Build.VERSION.SDK_INT > 23)
+            ei = new ExifInterface(input);
+        else
+            ei = new ExifInterface(selectedImage.getPath());
+
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotateImage(img, 90);
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotateImage(img, 180);
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotateImage(img, 270);
+            default:
+                return img;
+        }
+    }
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
+    }
+
 }

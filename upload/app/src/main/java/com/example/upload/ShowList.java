@@ -139,7 +139,7 @@ public class ShowList extends AppCompatActivity implements DataTransferInterface
         new Process().execute();
     }
 
-    public Bitmap resizeBitmapImage(Bitmap source, int maxResolution){
+    public static Bitmap resizeBitmapImage(Bitmap source, int maxResolution){
         int width = source.getWidth();
         int height = source.getHeight();
         int newWidth = width;

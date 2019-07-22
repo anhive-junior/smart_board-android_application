@@ -83,6 +83,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import static com.example.upload.ShowList.resizeBitmapImage;
 import static com.example.upload.UpLoadImage.getStringImage;
 import static com.example.upload.UpLoadImage.rotateImage;
 
@@ -925,8 +926,10 @@ public class Camera2BasicFragment extends Fragment
             case R.id.upload:
                 picture.setVisibility(View.VISIBLE);
                 afterpicture.setVisibility(View.GONE);
+
                 BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-                Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(),bmOptions);
+                Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(), bmOptions);
+                bitmap = resizeBitmapImage(bitmap, 1024);
 
                 try {
                     ExifInterface ei = new ExifInterface(mFile.getAbsolutePath());
