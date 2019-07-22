@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -98,9 +99,10 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
             }
             imageView.setImageBitmap(bitmap);*/
 
+            long start = System.currentTimeMillis();
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                //bitmap = resizeBitmapImage(bitmap, 1024);
+                bitmap = resizeBitmapImage(bitmap, 1024);
 
                 System.out.println(PathUtil.getPath(getApplicationContext(), filePath));
                 ExifInterface ei = new ExifInterface(PathUtil.getPath(getApplicationContext(), filePath));
@@ -136,6 +138,8 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
                 //Glide.with(getApplicationContext()).load(bitmap).into(imageView);
                 imageView.setImageBitmap(bitmap);
             }
+            long end = System.currentTimeMillis();
+            System.out.println((end - start)/1000.0);
 
         }
     }
