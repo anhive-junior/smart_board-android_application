@@ -33,6 +33,10 @@ import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -89,6 +93,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import static android.content.Context.SENSOR_SERVICE;
 import static com.example.upload.ShowList.resizeBitmapImage;
 import static com.example.upload.UpLoadImage.getStringImage;
 import static com.example.upload.UpLoadImage.rotateImage;
@@ -109,6 +114,12 @@ public class Camera2BasicFragment extends Fragment
 
     private long start;
     private long end;
+
+    Sensor accelerometer;
+    Sensor magnetometer;
+    Sensor vectorSensor;
+    DeviceOrientation deviceOrientation;
+    SensorManager mSensorManager;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -465,6 +476,11 @@ public class Camera2BasicFragment extends Fragment
         view.findViewById(R.id.upload).setOnClickListener(this);
         view.findViewById(R.id.cancel).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+
+        mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
+        accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        deviceOrientation = new DeviceOrientation();
     }
 
     @Override
@@ -475,6 +491,8 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
+        mSensorManager.registerListener(deviceOrientation.getEventListener(), accelerometer, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(deviceOrientation.getEventListener(), magnetometer, SensorManager.SENSOR_DELAY_UI);
         System.out.println("Resume");
         startBackgroundThread();
 
@@ -495,6 +513,7 @@ public class Camera2BasicFragment extends Fragment
         System.out.println("Pause");
         stopBackgroundThread();
         super.onPause();
+        mSensorManager.unregisterListener(deviceOrientation.getEventListener());
     }
 
     private void requestCameraPermission() {
@@ -862,7 +881,9 @@ public class Camera2BasicFragment extends Fragment
             setAutoFlash(captureBuilder);
 
             // Orientation
-            int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+            //int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+            int rotation = deviceOrientation.getOrientation();
+
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
 
             CameraCaptureSession.CaptureCallback CaptureCallback
