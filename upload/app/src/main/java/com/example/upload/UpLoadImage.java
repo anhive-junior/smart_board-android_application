@@ -55,6 +55,8 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
 
     private long start;
     private long end;
+    private String filename;
+    private int cut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,6 +179,14 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
             end = System.currentTimeMillis();
             System.out.println((end - start)/1000.0);
 
+            try {
+                filename = PathUtil.getPath(getApplicationContext(), filePath);
+                cut = filename.lastIndexOf('/');
+                filename = filename.substring(cut + 1);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -217,7 +227,7 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
             protected String doInBackground(Bitmap... params) {
                 Bitmap bitmap = params[0];
                 byte[] uploadImage = getStringImage(bitmap);
-                String result = rh.sendPostRequest(UPLOAD_URL, UPLOAD_KEY, val_caption.getText().toString(), uploadImage);
+                String result = rh.sendPostRequest(UPLOAD_URL, UPLOAD_KEY, val_caption.getText().toString(), uploadImage, filename);
 
                 return result;
             }

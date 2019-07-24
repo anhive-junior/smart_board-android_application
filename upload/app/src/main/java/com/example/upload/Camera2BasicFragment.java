@@ -63,6 +63,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -114,12 +115,18 @@ public class Camera2BasicFragment extends Fragment
 
     private long start;
     private long end;
+    private String filename;
+    private int cut;
 
     Sensor accelerometer;
     Sensor magnetometer;
     Sensor vectorSensor;
     DeviceOrientation deviceOrientation;
     SensorManager mSensorManager;
+    Integer facing;
+    int selfie = 0;
+
+    private EditText caption;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -288,7 +295,7 @@ public class Camera2BasicFragment extends Fragment
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
             String currentTime = simpleDateFormat.format(date);
             mFile = new File(getActivity().getExternalFilesDir(null), currentTime + ".jpg");
-            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
+            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile, facing));
         }
 
     };
@@ -475,12 +482,12 @@ public class Camera2BasicFragment extends Fragment
         view.findViewById(R.id.picture).setOnClickListener(this);
         view.findViewById(R.id.upload).setOnClickListener(this);
         view.findViewById(R.id.cancel).setOnClickListener(this);
+        view.findViewById(R.id.selfie).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        deviceOrientation = new DeviceOrientation();
     }
 
     @Override
@@ -491,8 +498,6 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        mSensorManager.registerListener(deviceOrientation.getEventListener(), accelerometer, SensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener(deviceOrientation.getEventListener(), magnetometer, SensorManager.SENSOR_DELAY_UI);
         System.out.println("Resume");
         startBackgroundThread();
 
@@ -505,6 +510,7 @@ public class Camera2BasicFragment extends Fragment
         } else {
             mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
         }
+
     }
 
     @Override
@@ -553,10 +559,17 @@ public class Camera2BasicFragment extends Fragment
                         = manager.getCameraCharacteristics(cameraId);
 
                 // We don't use a front facing camera in this sample.
-                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-                if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-                    continue;
+                facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+                if(selfie == 0){
+                    if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                        continue;
+                    }
+                }else{
+                    if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
+                        continue;
+                    }
                 }
+
 
                 StreamConfigurationMap map = characteristics.get(
                         CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -662,6 +675,11 @@ public class Camera2BasicFragment extends Fragment
             return;
         }
         setUpCameraOutputs(width, height);
+
+        deviceOrientation = new DeviceOrientation(facing);
+        mSensorManager.registerListener(deviceOrientation.getEventListener(), accelerometer, SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(deviceOrientation.getEventListener(), magnetometer, SensorManager.SENSOR_DELAY_UI);
+
         configureTransform(width, height);
         Activity activity = getActivity();
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
@@ -816,13 +834,19 @@ public class Camera2BasicFragment extends Fragment
             matrix.postRotate(180, centerX, centerY);
         }
         mTextureView.setTransform(matrix);
+
     }
+
 
     /**
      * Initiate a still image capture.
      */
     private void takePicture() {
-        lockFocus();
+        if (facing == CameraCharacteristics.LENS_FACING_BACK) {
+            lockFocus();
+        } else {
+            captureStillPicture();
+        }
     }
 
     /**
@@ -947,16 +971,29 @@ public class Camera2BasicFragment extends Fragment
     public void onClick(View view) {
         Button picture = (Button)getActivity().findViewById(R.id.picture);
         LinearLayout afterpicture = (LinearLayout)getActivity().findViewById(R.id.afterpicture);
+        caption = (EditText)getActivity().findViewById(R.id.caption);
         switch (view.getId()) {
+            case R.id.selfie:{
+                if(selfie == 0){
+                    selfie = 1;
+                }else{
+                    selfie = 0;
+                }
+                onPause();
+                onResume();
+                break;
+            }
             case R.id.picture: {
                 takePicture();
                 picture.setVisibility(View.GONE);
                 afterpicture.setVisibility(View.VISIBLE);
+                caption.setVisibility(View.VISIBLE);
                 break;
             }
             case R.id.upload:
                 picture.setVisibility(View.VISIBLE);
                 afterpicture.setVisibility(View.GONE);
+                caption.setVisibility(View.GONE);
 
                 start = System.currentTimeMillis();
 
@@ -1017,7 +1054,12 @@ public class Camera2BasicFragment extends Fragment
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                uploadImage(bitmap, loading);
+
+                filename = mFile.getAbsolutePath();
+                cut = filename.lastIndexOf('/');
+                filename = filename.substring(cut + 1);
+
+                uploadImage(bitmap, loading, filename);
 
                 end = System.currentTimeMillis();
                 System.out.println((end - start)/1000.0);
@@ -1027,6 +1069,8 @@ public class Camera2BasicFragment extends Fragment
             case R.id.cancel:
                 picture.setVisibility(View.VISIBLE);
                 afterpicture.setVisibility(View.GONE);
+                caption.setVisibility(View.GONE);
+                caption.getText().clear();
                 unlockFocus();
                 break;
         }
@@ -1053,16 +1097,21 @@ public class Camera2BasicFragment extends Fragment
          */
         private File mFile;
 
-        ImageSaver(Image image, File file) {
+        private int facing;
+
+        ImageSaver(Image image, File file, int facing) {
             mImage = image;
             mFile = file;
+            this.facing = facing;
         }
 
         @Override
         public void run() {
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
+
             FileOutputStream output = null;
             try {
                 output = new FileOutputStream(mFile);
@@ -1079,6 +1128,71 @@ public class Camera2BasicFragment extends Fragment
                     }
                 }
             }
+
+
+            if(facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                Matrix mtx = new Matrix();
+                //this will prevent mirror effect
+                mtx.preScale(-1.0f, 1.0f);
+                // Setting post rotate to 90 because image will be possibly in landscape
+
+                try {
+                    ExifInterface ei = new ExifInterface(mFile.getAbsolutePath());
+                    int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                            ExifInterface.ORIENTATION_UNDEFINED);
+                    System.out.println(orientation);
+
+                    switch(orientation) {
+                        case ExifInterface.ORIENTATION_ROTATE_90:
+                            mtx.postRotate(270.f);
+                            break;
+
+                        case ExifInterface.ORIENTATION_ROTATE_180:
+                            mtx.postRotate(180.f);
+                            break;
+
+                        case ExifInterface.ORIENTATION_ROTATE_270:
+                            mtx.postRotate(90.f);
+                            break;
+
+                        case ExifInterface.ORIENTATION_NORMAL:
+                        default:
+                            break;
+                    }
+                    //imageView.setImageBitmap(rotatedBitmap);
+                    System.out.println("success");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                // Rotating Bitmap , create real image that we want
+                bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), mtx, true);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                bytes = baos.toByteArray();
+
+                try {
+                    output = new FileOutputStream(mFile);
+                    output.write(bytes);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    mImage.close();
+                    if (null != output) {
+                        try {
+                            output.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
         }
 
     }
@@ -1163,7 +1277,7 @@ public class Camera2BasicFragment extends Fragment
 
 
 
-    private void uploadImage(final Bitmap bitmap, final ProgressDialog loading){
+    private void uploadImage(final Bitmap bitmap, final ProgressDialog loading, final String filename){
         class Process extends AsyncTask<Bitmap,Void,String> {
             //ProgressDialog loading;
             RequestHandler rh = new RequestHandler(getActivity().getApplicationContext());
@@ -1184,7 +1298,8 @@ public class Camera2BasicFragment extends Fragment
             protected String doInBackground(Bitmap... params) {
                 Bitmap bitmap = params[0];
                 byte[] uploadImage = getStringImage(bitmap);
-                String result = rh.sendPostRequest(UPLOAD_URL, UPLOAD_KEY, "", uploadImage);
+                String result = rh.sendPostRequest(UPLOAD_URL, UPLOAD_KEY, caption.getText().toString(), uploadImage, filename);
+                caption.getText().clear();
 
                 return result;
             }

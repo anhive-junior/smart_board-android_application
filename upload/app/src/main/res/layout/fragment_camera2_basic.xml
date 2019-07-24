@@ -17,12 +17,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/selfie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/texture"
+        android:layout_marginEnd="0dp"
+        android:text="셀카" />
+
     <com.example.upload.AutoFitTextureView
         android:id="@+id/texture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp" />
+
+    <EditText
+        android:id="@+id/caption"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/control"
+        android:layout_marginBottom="0dp"
+        android:ems="10"
+        android:inputType="text"
+        android:background="@color/control_background"
+        android:hint="메모"/>
 
     <FrameLayout
         android:id="@+id/control"

@@ -40,8 +40,8 @@ import android.media.ExifInterface;
  */
 public class DeviceOrientation {
     private final int ORIENTATION_PORTRAIT = 0;//ExifInterface.ORIENTATION_ROTATE_90; // 6
-    private final int ORIENTATION_LANDSCAPE_REVERSE = 3;//ExifInterface.ORIENTATION_ROTATE_180; // 3
-    private final int ORIENTATION_LANDSCAPE = 1;//ExifInterface.ORIENTATION_NORMAL; // 1
+    private int ORIENTATION_LANDSCAPE_REVERSE;//ExifInterface.ORIENTATION_ROTATE_180; // 3
+    private int ORIENTATION_LANDSCAPE;//ExifInterface.ORIENTATION_NORMAL; // 1
     private final int ORIENTATION_PORTRAIT_REVERSE = 2;//ExifInterface.ORIENTATION_ROTATE_270; // 8
 
     int smoothness = 1;
@@ -52,7 +52,14 @@ public class DeviceOrientation {
     private float[] pitches;
     private float[] rolls;
 
-    public DeviceOrientation() {
+    public DeviceOrientation(int facing) {
+        if(facing == 0){
+            ORIENTATION_LANDSCAPE_REVERSE = 1;
+            ORIENTATION_LANDSCAPE = 3;
+        }else{
+            ORIENTATION_LANDSCAPE_REVERSE = 3;
+            ORIENTATION_LANDSCAPE = 1;
+        }
         pitches = new float[smoothness];
         rolls = new float[smoothness];
     }

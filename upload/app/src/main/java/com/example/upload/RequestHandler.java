@@ -32,7 +32,7 @@ public class RequestHandler {
         mContext = context;
     }
 
-    public String sendPostRequest(String requestURL, String key, String caption, byte[] value){//sendcard
+    public String sendPostRequest(String requestURL, String key, String caption, byte[] value, String filename){//sendcard
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
         int maxBufferSize = 1 * 1024 * 1024;
@@ -59,7 +59,7 @@ public class RequestHandler {
             writer.writeBytes(lineEnd);
 
             writer.writeBytes(twoHyphens + boundary + lineEnd);
-            writer.writeBytes("Content-Disposition: form-data; name=\"" + "card" + "\";filename=\"test.jpg\"" + lineEnd);
+            writer.writeBytes("Content-Disposition: form-data; name=\"" + "card" + "\";filename=\"" + filename + "\"" + lineEnd);
             writer.writeBytes(lineEnd);
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(value);
             bytesAvailable = byteArrayInputStream.available();
