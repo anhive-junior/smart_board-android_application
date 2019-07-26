@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class MainActivity extends AppCompatActivity implements Button.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
         private Button buttonSet;
         private Button buttonUpload;
         private Button buttonList;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
                 in = new Intent(getApplicationContext(), UpLoadImage.class);
                 break ;
             case R.id.button_list :
-                in = new Intent(getApplicationContext(), ShowList.class);
+                in = new Intent(getApplicationContext(), ShowList_test.class);
                 break ;
             case R.id.button_slide :
                 in = new Intent(getApplicationContext(), ManageSlide.class);

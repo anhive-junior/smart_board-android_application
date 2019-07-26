@@ -30,6 +30,7 @@
         </activity>
         <activity android:name=".UpLoadImage"/>
         <activity android:name=".ShowList"/>
+        <activity android:name=".ShowList_test"/>
         <activity android:name=".ShowImage"/>
         <activity android:name=".ManageSlide"/>
         <activity android:name=".UpLoadVideo"/>

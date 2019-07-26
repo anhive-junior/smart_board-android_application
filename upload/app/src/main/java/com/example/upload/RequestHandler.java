@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -194,6 +195,7 @@ public class RequestHandler {
         try {
             url = new URL(requestURL);
 
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
@@ -224,8 +226,11 @@ public class RequestHandler {
 
             int responseCode = conn.getResponseCode();
 
+            //InputStreamReader in = new InputStreamReader((InputStream)conn.getContent(), "UTF-8");
+
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                //BufferedReader br = new BufferedReader(in);
                 response = br.readLine();
             } else {
                 response = "Error Registering";
