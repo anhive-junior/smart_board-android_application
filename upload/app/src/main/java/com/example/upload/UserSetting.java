@@ -10,12 +10,15 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
-public class Login extends AppCompatActivity implements Button.OnClickListener {
+public class UserSetting extends AppCompatActivity implements Button.OnClickListener {
     public String test;
 
     private String UPLOAD_URL;
@@ -26,14 +29,12 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
     private EditText edittextPassword;
     private EditText edittextIP;
     private EditText edittextPort;
-    private String varID;
-    private String varPassword;
-    private String varIP;
-    private String varPort;
-    private CheckBox checkboxAutologin;
+    private String varID = "";
+    private String varPassword = "";
+    private String varIP = "";
+    private String varPort = "";
 
     private SharedPreferences appData;//로그인정보 저장매체
-    private boolean autoLogin;//자동로그인여부
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,33 +42,21 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
         appData = getSharedPreferences("appData", MODE_PRIVATE);
         load();
 
-        //자동로그인
-        if(autoLogin) {
-            login(UPLOAD_URL, UPLOAD_KEY, varID, varPassword);
-            //finish();//개발용주석처리
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
         buttonLogin = (Button) findViewById(R.id.button_login);
         buttonLogin.setOnClickListener(this);
 
-        checkboxAutologin = (CheckBox) findViewById(R.id.checkbox_autologin);
         edittextIP = (EditText) findViewById(R.id.editText_ip);
         edittextPort = (EditText) findViewById(R.id.editText_port);
         edittextID = (EditText) findViewById(R.id.editText_id);
         edittextPassword = (EditText) findViewById(R.id.editText_password);
 
-        // 이전에 로그인 정보를 저장시킨 기록이 있다면
-        if (autoLogin) {
-            edittextID.setText(varID);
-            edittextPassword.setText(varPassword);
-            edittextIP.setText(varIP);
-            edittextPort.setText(varPort);
-            checkboxAutologin.setChecked(autoLogin);
-        }
-
+        edittextID.setText(varID);
+        edittextPassword.setText(varPassword);
+        edittextIP.setText(varIP);
+        edittextPort.setText(varPort);
 
     }
 
@@ -96,7 +85,6 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
 
         // 에디터객체.put타입( 저장시킬 이름, 저장시킬 값 )
         // 저장시킬 이름이 이미 존재하면 덮어씌움
-        editor.putBoolean("SAVE_LOGIN_DATA", checkboxAutologin.isChecked());
         editor.putString("ID", edittextID.getText().toString().trim());
         editor.putString("PWD", edittextPassword.getText().toString().trim());
         editor.putString("IP", edittextIP.getText().toString().trim());
@@ -111,7 +99,6 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
     private void load() {
         // SharedPreferences 객체.get타입( 저장된 이름, 기본값 )
         // 저장된 이름이 존재하지 않을 시 기본값
-        autoLogin = appData.getBoolean("SAVE_LOGIN_DATA", false);
         varID = appData.getString("ID", "");
         varPassword = appData.getString("PWD", "");
         UPLOAD_KEY = appData.getString("KEY", "");
@@ -130,7 +117,7 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
 
             @Override
             protected void onPreExecute() {
-                loading = ProgressDialog.show(Login.this, "Loading", "Please wait...",true,true);
+                loading = ProgressDialog.show(UserSetting.this, "Loading", "Please wait...",true,true);
             }
 
             @Override
@@ -153,8 +140,8 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
                 if(s.equals("login")) {
                     save();
                     Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                    finish();
                 }
                 else {
                     Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();

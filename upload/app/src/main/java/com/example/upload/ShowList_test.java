@@ -100,7 +100,7 @@ public class ShowList_test extends AppCompatActivity implements DataTransferInte
 
                 if (UPLOAD_KEY == "getslidelist") {
                     my_recycler_view = (RecyclerView) findViewById(R.id.my_recycler_view);
-                    my_recycler_view.setHasFixedSize(true);
+                    //my_recycler_view.setHasFixedSize(true);
                     adapter = new RecyclerViewDataAdapter(getApplicationContext(), ShowList_test.this, ShowList_test.this, testdata);
                     my_recycler_view.setLayoutManager(new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false));
                     my_recycler_view.setAdapter(adapter);

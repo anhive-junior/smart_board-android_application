@@ -22,6 +22,8 @@
         <activity android:name=".CameraActivity"
             android:theme="@style/MaterialTheme"></activity>
         <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity2"></activity>
+        <activity android:name=".UserSetting"></activity>
         <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
