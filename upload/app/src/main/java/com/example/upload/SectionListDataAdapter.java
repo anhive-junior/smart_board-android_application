@@ -5,7 +5,6 @@ package com.example.upload;
  */
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +13,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +21,7 @@ import java.util.HashMap;
 
 public class SectionListDataAdapter extends RecyclerView.Adapter<SectionListDataAdapter.SingleItemRowHolder>{
 
-    private ArrayList<SingleDataModel> itemsList;
+    public static ArrayList<SingleDataModel> itemsList;
     //private Context mContext;
     private Activity mActivity;
     private Boolean mCheckboxVisible;
@@ -36,8 +32,9 @@ public class SectionListDataAdapter extends RecyclerView.Adapter<SectionListData
     private ArrayList<String[]> property;
     private String lst = "";
     private DataTransferInterface dtInterface;
+    private int itemIndex;
 
-    public SectionListDataAdapter(Activity activity, Boolean checkboxvisible, final DataTransferInterface dtInterface, ArrayList<SingleDataModel> itemsList) {
+    public SectionListDataAdapter(Activity activity, Boolean checkboxvisible, final DataTransferInterface dtInterface, ArrayList<SingleDataModel> itemsList, int itemIndex) {
         this.itemsList = itemsList;
         //this.mContext = context;
         this.mActivity = activity;
@@ -45,6 +42,8 @@ public class SectionListDataAdapter extends RecyclerView.Adapter<SectionListData
         cardlist = new HashMap<>();
         property = new ArrayList<>();
         this.dtInterface = dtInterface;
+        this.itemIndex = itemIndex;
+        System.out.println(itemIndex);
 
         Button refresh = (Button) mActivity.findViewById(R.id.button_refresh);
         Button deleteonce = (Button) mActivity.findViewById(R.id.button_deleteonce);
@@ -116,8 +115,8 @@ public class SectionListDataAdapter extends RecyclerView.Adapter<SectionListData
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ShowImage.class);
-                intent.putExtra("filepath", singleItem.filepath);
-                intent.putExtra("name", singleItem.name);
+                intent.putExtra("currentitem", itemIndex + position);
+                intent.putExtra("itemList", itemsList);
                 mActivity.startActivityForResult(intent, 1111);
             }
         });

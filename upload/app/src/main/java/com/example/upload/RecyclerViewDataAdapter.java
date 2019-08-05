@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.constraintlayout.solver.widgets.WidgetContainer;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +32,7 @@ public class RecyclerViewDataAdapter extends RecyclerView.Adapter<RecyclerViewDa
     private Activity mActivity;
     private Boolean mCheckboxVisible = Boolean.FALSE;
     private DataTransferInterface dtInterface;
+    private int itemIndex = 0;
 
     public RecyclerViewDataAdapter(Context context, Activity activity, DataTransferInterface dtInterface, ArrayList<SectionDataModel> dataList) {
         this.dataList = dataList;
@@ -54,12 +56,17 @@ public class RecyclerViewDataAdapter extends RecyclerView.Adapter<RecyclerViewDa
 
         ArrayList singleSectionItems = dataList.get(position).item;
 
+
         itemRowHolder.itemTitle.setText(sectionName);
 
-        SectionListDataAdapter itemListDataAdapter = new SectionListDataAdapter(mActivity, mCheckboxVisible, dtInterface, singleSectionItems);
+
+        SectionListDataAdapter itemListDataAdapter = new SectionListDataAdapter(mActivity, mCheckboxVisible, dtInterface, singleSectionItems, itemIndex);
+
+        System.out.println(singleSectionItems.size());
+        System.out.println(itemIndex += singleSectionItems.size());
 
         //itemRowHolder.recycler_view_list.setHasFixedSize(true);
-        itemRowHolder.recycler_view_list.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
+        itemRowHolder.recycler_view_list.setLayoutManager(new GridLayoutManager(mContext, 4));
         itemRowHolder.recycler_view_list.setAdapter(itemListDataAdapter);
 
 

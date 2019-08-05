@@ -5,4 +5,8 @@
     <color name="colorAccent">#D81B60</color>
     <color name="control_background">#cc4285f4</color>
     <color name="checkbox">#ffffff</color>
+    <color name="si_default_text_color">#FF0000</color>
+    <color name="si_default_text_color_selected">#FF00FF</color>
+    <color name="si_default_indicator_bg">#ee9999</color>
+    <color name="transparent">#00000000</color>
 </resources>

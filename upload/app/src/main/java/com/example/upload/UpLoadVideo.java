@@ -40,7 +40,8 @@ public class UpLoadVideo extends AppCompatActivity implements Button.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.upload_video);
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        UPLOAD_URL = Login.UPLOAD_URL;
 
         mediaController = new MediaController(this);
         videoView = (VideoView)findViewById(R.id.videoView);

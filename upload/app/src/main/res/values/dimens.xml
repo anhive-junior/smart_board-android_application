@@ -5,4 +5,7 @@
     <integer name="grid_span_1">1</integer>
     <integer name="grid_span_2">2</integer>
     <integer name="grid_span_3">3</integer>
+    <dimen name="si_default_text_size">18sp</dimen>
+    <dimen name="si_default_radius_max">24dp</dimen>
+    <dimen name="si_default_radius_min">8dp</dimen>
 </resources>

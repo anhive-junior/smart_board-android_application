@@ -9,16 +9,22 @@ public class GlobalVar extends Application {
     public String Address;
     public String IP;
     public String Port;
+    public String Rest;
     private HashMap<String, String> playworkdata;
 
     public String getMyAddr(){
         return Address;
     }
 
-    public void setMyAddr(String ip, String port){
+    public String getMyRest(){
+        return Rest;
+    }
+
+    public void setMyAddr(String ip, String port, String rest){
         this.Address = "http://" + ip + ":" + port;
         this.IP = ip;
         this.Port = port;
+        this.Rest = rest;
     }
 
     public String getMyIP(){

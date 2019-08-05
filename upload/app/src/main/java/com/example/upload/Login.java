@@ -1,10 +1,16 @@
 package com.example.upload;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -14,11 +20,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Login extends AppCompatActivity implements Button.OnClickListener {
-    public String test;
-
-    private String UPLOAD_URL;
+    public static String UPLOAD_URL;
+    private String loginUrl;
     private String UPLOAD_KEY;
     private ArrayList<String[]> property;
     private Button buttonLogin;
@@ -26,24 +33,77 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
     private EditText edittextPassword;
     private EditText edittextIP;
     private EditText edittextPort;
+    private EditText edittextRest;
     private String varID;
     private String varPassword;
     private String varIP;
     private String varPort;
+    private String varRest;
     private CheckBox checkboxAutologin;
+    private Progress progress;
 
     private SharedPreferences appData;//로그인정보 저장매체
     private boolean autoLogin;//자동로그인여부
+    Intent sendIntent;
+    private WifiManager wifiManager;
+
+
+    void readWepConfig()
+    {
+        WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        List<WifiConfiguration> item = wifi.getConfiguredNetworks();
+        int i = item.size();
+        Log.d("WifiPreference", "NO OF CONFIG " + i );
+        Iterator<WifiConfiguration> iter =  item.iterator();
+        for(int j=0;j<i;j++){
+            WifiConfiguration config = item.get(j);
+            Log.d("WifiPreference", "SSID" + config.SSID);
+            Log.d("WifiPreference", "PASSWORD" + config.preSharedKey);
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        System.out.println(wifiManager.getWifiState());
+        System.out.println(" ");
+        System.out.println(wifiManager.getScanResults().get(0).SSID);
+        System.out.println(" ");
+
+
+        //readWepConfig();
+        /*
+        System.out.println(wifiManager.getConfiguredNetworks());
+        System.out.println(" ");
+        System.out.println(wifiManager.getConnectionInfo());
+        System.out.println(" ");
+        System.out.println(wifiManager.getDhcpInfo());
+        System.out.println(" ");*/
+
+        sendIntent = new Intent("com.dwfox.myapplication.SEND_BROAD_CAST");
+
+        BroadcastReceiver mReceiver;
+
+        IntentFilter intentfilter = new IntentFilter(); intentfilter.addAction("com.dwfox.myapplication.SEND_BROAD_CAST"); //동적 리시버 구현
+        mReceiver = new BroadcastReceiver(){
+            @Override
+            public void onReceive(Context context, Intent intent){
+                String sendString = intent.getStringExtra("sendString");
+                System.out.println("test2");
+                System.out.println(sendString);}
+        }; //Receiver 등록
+        registerReceiver(mReceiver, intentfilter);
+
         // 설정값 불러오기
         appData = getSharedPreferences("appData", MODE_PRIVATE);
         load();
 
         //자동로그인
         if(autoLogin) {
-            login(UPLOAD_URL, UPLOAD_KEY, varID, varPassword);
+            login(loginUrl, UPLOAD_KEY, varID, varPassword);
             //finish();//개발용주석처리
         }
 
@@ -58,13 +118,18 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
         edittextPort = (EditText) findViewById(R.id.editText_port);
         edittextID = (EditText) findViewById(R.id.editText_id);
         edittextPassword = (EditText) findViewById(R.id.editText_password);
+        edittextRest = (EditText) findViewById(R.id.editText_rest);
 
+        progress = new Progress(Login.this, Login.this, 0, 50);
+
+        progress.show();
         // 이전에 로그인 정보를 저장시킨 기록이 있다면
         if (autoLogin) {
             edittextID.setText(varID);
             edittextPassword.setText(varPassword);
             edittextIP.setText(varIP);
             edittextPort.setText(varPort);
+            edittextRest.setText(varRest);
             checkboxAutologin.setChecked(autoLogin);
         }
 
@@ -79,12 +144,15 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
                 varPassword = edittextPassword.getText().toString().trim();
                 varIP = edittextIP.getText().toString().trim();
                 varPort = edittextPort.getText().toString().trim();
+                varRest = edittextRest.getText().toString().trim();
 
-                ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort);
-                UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+                ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
+                //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+                loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+                UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
                 UPLOAD_KEY = "login";
 
-                login(UPLOAD_URL, UPLOAD_KEY, varID, varPassword);
+                login(loginUrl, UPLOAD_KEY, varID, varPassword);
                 break ;
         }
     }
@@ -101,6 +169,7 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
         editor.putString("PWD", edittextPassword.getText().toString().trim());
         editor.putString("IP", edittextIP.getText().toString().trim());
         editor.putString("PORT", edittextPort.getText().toString().trim());
+        editor.putString("REST", edittextRest.getText().toString().trim());
         editor.putString("KEY", UPLOAD_KEY.trim());
 
         // apply, commit 을 안하면 변경된 내용이 저장되지 않음
@@ -117,25 +186,26 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
         UPLOAD_KEY = appData.getString("KEY", "");
         varIP = appData.getString("IP", "");
         varPort = appData.getString("PORT", "");
+        varRest = appData.getString("REST", "");
 
-        ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort);
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+        ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
+        //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+        loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
     }
 
 
     private void login(final String address, final String key, final String id, final String password){
         class Process extends AsyncTask<Void,Void,String> {
-            ProgressDialog loading;
             RequestHandler rh = new RequestHandler(getApplicationContext());
 
             @Override
             protected void onPreExecute() {
-                loading = ProgressDialog.show(Login.this, "Loading", "Please wait...",true,true);
             }
 
             @Override
             protected void onPostExecute(String s) {
-                loading.dismiss();
+                progress.setMax(100);
                 System.out.println(s);
                 //이상하게 여기만 String compare가 == 안되고 equals는됨
                 /*
@@ -169,7 +239,8 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
                 property.add(new String[]{"user_code", id});
                 property.add(new String[]{"input_code", password});
 
-                String result = rh.sendPostRequest(address, property);
+                //String result = rh.sendPostRequest(address, property);
+                String result = rh.sendtest("192.168.219.255");
 
                 try{
                     result = ParseJson(result);

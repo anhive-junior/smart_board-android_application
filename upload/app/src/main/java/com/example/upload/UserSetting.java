@@ -22,6 +22,7 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
     public String test;
 
     private String UPLOAD_URL;
+    private String loginUrl;
     private String UPLOAD_KEY;
     private ArrayList<String[]> property;
     private Button buttonLogin;
@@ -29,10 +30,12 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
     private EditText edittextPassword;
     private EditText edittextIP;
     private EditText edittextPort;
+    private EditText edittextRest;
     private String varID = "";
     private String varPassword = "";
     private String varIP = "";
     private String varPort = "";
+    private String varRest = "";
 
     private SharedPreferences appData;//로그인정보 저장매체
 
@@ -52,11 +55,13 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
         edittextPort = (EditText) findViewById(R.id.editText_port);
         edittextID = (EditText) findViewById(R.id.editText_id);
         edittextPassword = (EditText) findViewById(R.id.editText_password);
+        edittextRest = (EditText) findViewById(R.id.editText_rest);
 
         edittextID.setText(varID);
         edittextPassword.setText(varPassword);
         edittextIP.setText(varIP);
         edittextPort.setText(varPort);
+        edittextRest.setText(varRest);
 
     }
 
@@ -68,12 +73,15 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
                 varPassword = edittextPassword.getText().toString().trim();
                 varIP = edittextIP.getText().toString().trim();
                 varPort = edittextPort.getText().toString().trim();
+                varRest = edittextRest.getText().toString().trim();
 
-                ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort);
-                UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+                ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
+                //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+                loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+                UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
                 UPLOAD_KEY = "login";
 
-                login(UPLOAD_URL, UPLOAD_KEY, varID, varPassword);
+                login(loginUrl, UPLOAD_KEY, varID, varPassword);
                 break ;
         }
     }
@@ -89,6 +97,7 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
         editor.putString("PWD", edittextPassword.getText().toString().trim());
         editor.putString("IP", edittextIP.getText().toString().trim());
         editor.putString("PORT", edittextPort.getText().toString().trim());
+        editor.putString("REST", edittextRest.getText().toString().trim());
         editor.putString("KEY", UPLOAD_KEY.trim());
 
         // apply, commit 을 안하면 변경된 내용이 저장되지 않음
@@ -104,9 +113,12 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
         UPLOAD_KEY = appData.getString("KEY", "");
         varIP = appData.getString("IP", "");
         varPort = appData.getString("PORT", "");
+        varRest = appData.getString("REST", "");
 
-        ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort);
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+        ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
+        //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+        loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
+        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
     }
 
 

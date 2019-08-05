@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:gravity="center">
+
+    <com.github.lzyzsd.circleprogress.DonutProgress xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/progressbar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:backgroundTint="#0066FF"
+        android:backgroundTintMode="add"
+        custom:circle_progress="0"
+        custom:donut_finished_color="#0066FF"
+        custom:donut_finished_stroke_width="15dp"
+        custom:donut_show_text="true"
+        custom:donut_unfinished_color="@color/primary_material_light"
+        custom:donut_unfinished_stroke_width="15dp" />
+</LinearLayout>

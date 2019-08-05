@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.upload">
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" />
@@ -19,11 +22,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".CameraActivity"
             android:theme="@style/MaterialTheme"></activity>
-        <activity android:name=".MainActivity"></activity>
         <activity android:name=".MainActivity2"></activity>
         <activity android:name=".UserSetting"></activity>
+        <activity android:name=".SelectBoard">
+        </activity>
         <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,12 +37,13 @@
         </activity>
         <activity android:name=".UpLoadImage"/>
         <activity android:name=".ShowList"/>
-        <activity android:name=".ShowList_test"/>
         <activity android:name=".ShowImage"/>
         <activity android:name=".ManageSlide"/>
         <activity android:name=".UpLoadVideo"/>
         <activity android:name=".PlayWork"/>
         <activity android:name=".Popup"
+            android:theme="@style/popupTheme" android:screenOrientation="portrait"/>
+        <activity android:name=".SelectBoardSetProperty"
             android:theme="@style/popupTheme" android:screenOrientation="portrait"/>
 
     </application>

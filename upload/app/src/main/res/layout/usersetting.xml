@@ -23,6 +23,15 @@
         android:inputType="text|number"/>
 
     <EditText
+        android:id="@+id/editText_rest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Rest Address"
+        android:inputType="text|number"
+        android:text="/signage/s00_signage.php" />
+
+    <EditText
         android:id="@+id/editText_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

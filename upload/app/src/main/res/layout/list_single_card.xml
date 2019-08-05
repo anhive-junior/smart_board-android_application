@@ -10,17 +10,17 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="0dp"
         android:background="?android:selectableItemBackground"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:scaleType="fitCenter">
 
         <ImageView
             android:id="@+id/itemImage"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center_horizontal"
-            android:scaleType="fitCenter"/>
+            android:layout_width="1000dp"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"/>
 
         <CheckBox
             android:id="@+id/checkBox"

@@ -4,22 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import androidx.viewpager.widget.ViewPager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,10 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import static com.example.upload.ShowList.resizeBitmapImage;
-import static java.lang.Boolean.TRUE;
-
-public class ShowImage extends AppCompatActivity implements Button.OnClickListener {
+public class ShowImage extends AppCompatActivity{
     public String UPLOAD_URL;
     public static final String UPLOAD_KEY = "rmcard";
 
@@ -43,26 +31,33 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
     private long start;
     private long end;
 
+    private ArrayList<String> itemsList;
+    private int currentitem;
+
+    private ViewPager viewPager ;
+    private ShowImageAdapter pagerAdapter ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.showimage);
+        setContentView(R.layout.showimagetest);
         property = new ArrayList<>();
         property.add(new String[]{"func", UPLOAD_KEY});
 
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        UPLOAD_URL = Login.UPLOAD_URL;
         Intent intent = getIntent();
+        itemsList = ShowList.itemList;
+        currentitem = intent.getIntExtra("currentitem", 0);
+
+        viewPager = (ViewPager) findViewById(R.id.viewPager) ;
+        pagerAdapter = new ShowImageAdapter(ShowImage.this, this, itemsList, currentitem) ;
+        viewPager.setAdapter(pagerAdapter) ;
+        viewPager.setCurrentItem(currentitem);
 
 
-        imageView = (ImageView) findViewById(R.id.imageView3);
 
-        buttonBack = (Button) findViewById(R.id.button_back);
-        buttonDelete = (Button) findViewById(R.id.button_delete);
-
-        buttonBack.setOnClickListener(this);
-        buttonDelete.setOnClickListener(this);
-
-
+        /*
         start = System.currentTimeMillis();
         //showimage(intent.getExtras().getString("filepath"), Boolean.FALSE);
 
@@ -87,86 +82,13 @@ public class ShowImage extends AppCompatActivity implements Button.OnClickListen
                         return false;
                     }
                 })
-                .into(imageView);
+                .into(imageView);*/
+
+
 
     }
 
-    @Override
-    public void onClick(View view){
-        switch (view.getId()) {
-            case R.id.button_back :
-                finish();
-                break ;
-            case R.id.button_delete :
-                Intent intent = getIntent();
-                showimage(intent.getExtras().getString("name"), TRUE);
-                break ;
-        }
-    }
 
-    private void showimage(final String data, final Boolean rm){
-        class Process extends AsyncTask<Void,Void,Bitmap>{
-            ProgressDialog loading;
-            RequestHandler rh = new RequestHandler(getApplicationContext());
-
-            @Override
-            protected void onPreExecute() {
-                loading = ProgressDialog.show(ShowImage.this, "Loading", "Please wait...",true,true);
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap s) {
-                myBitmap = s;
-
-                if(rm){
-                    setResult(1234);
-                    finish();
-                }
-                else{
-                    imageView.setImageBitmap(myBitmap);
-                }
-
-                loading.dismiss();
-
-                end = System.currentTimeMillis();
-                System.out.println((end - start)/1000.0);
-            }
-
-            @Override
-            protected Bitmap doInBackground(Void... params) {
-                Bitmap result = null;
-
-                if(rm) {
-                    property.add(new String[]{"card", data});
-                    rh.sendPostRequest(UPLOAD_URL, property);
-                }
-                else {
-
-
-                    try {
-                        URL url = new URL("http://" + data);
-                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                        connection.setReadTimeout(15000);
-                        connection.setConnectTimeout(15000);
-                        connection.setDoInput(true);
-                        connection.connect();
-                        InputStream input = connection.getInputStream();
-                        result = BitmapFactory.decodeStream(input);
-                        //result = resizeBitmapImage(result, imageView.getMaxWidth());
-                        //result = Bitmap.createScaledBitmap(result, 960, 960, true);
-                        connection.disconnect();
-
-                    } catch (IOException e) {
-                        System.out.println(e);
-                        System.out.println("errorr");
-                    }
-                }
-                return result;
-            }
-        }
-
-        new Process().execute();
-    }
 
 }
 

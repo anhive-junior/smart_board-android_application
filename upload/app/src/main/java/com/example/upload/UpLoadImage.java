@@ -1,7 +1,14 @@
 package com.example.upload;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.animation.IntEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,17 +18,24 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.exifinterface.media.ExifInterface;
 
@@ -34,10 +48,13 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
+import com.github.lzyzsd.circleprogress.DonutProgress;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.example.upload.ShowList.resizeBitmapImage;
 
@@ -57,6 +74,9 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
     private long end;
     private String filename;
     private int cut;
+    private int count;
+    private int max;
+    private Progress progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +84,8 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
         setContentView(R.layout.upload_image);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        UPLOAD_URL = Login.UPLOAD_URL;
         System.out.println(UPLOAD_URL);
 
         buttonChoose = (Button) findViewById(R.id.buttonChoose);
@@ -73,8 +94,12 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
 
         imageView = (ImageView) findViewById(R.id.imageView);
 
+        progress = new Progress(UpLoadImage.this, UpLoadImage.this, 0, 50);
+
         buttonChoose.setOnClickListener(this);
         buttonUpload.setOnClickListener(this);
+
+        showFileChooser();
     }
 
     @Override
@@ -153,8 +178,7 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
                 //Glide.with(getApplicationContext()).load(bitmap).into(imageView);
                 imageView.setImageBitmap(bitmap);
             }*/
-            final ProgressDialog loading;
-            loading = ProgressDialog.show(UpLoadImage.this, "Loading", "Please wait...",true,true);
+            progress.show();
 
             Glide.with(this)
                     .asBitmap()
@@ -163,7 +187,8 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             imageView.setImageBitmap(resource);
-                            loading.dismiss();
+                            progress.setMax(100);
+                            //loading.dismiss();
                             bitmap = resource;
                             end = System.currentTimeMillis();
                             System.out.println((end - start)/1000.0);
@@ -171,7 +196,7 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
 
                         @Override
                         public void onLoadCleared(@Nullable Drawable placeholder) {
-                            loading.dismiss();
+                            //loading.dismiss();
                         }
                     });
 

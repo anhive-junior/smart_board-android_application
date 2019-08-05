@@ -39,7 +39,8 @@ public class PlayWork extends AppCompatActivity implements Button.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playwork);
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        UPLOAD_URL = Login.UPLOAD_URL;
         playworkdata = new HashMap<>();
         property = new ArrayList<>();
         // 리사이클러뷰에 표시할 데이터 리스트 생성.

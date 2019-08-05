@@ -12,27 +12,28 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="20"/>
+        android:layout_weight="40"/>
 
     <EditText
         android:id="@+id/input_caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Caption"
+        android:background="@drawable/stroke"
+        android:hint="메모 입력"
         android:layout_weight="1"/>
 
     <Button
         android:id="@+id/buttonChoose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="choose_file"
+        android:text="사진 선택"
         android:layout_weight="1"/>
 
     <Button
         android:id="@+id/buttonUpload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="upload_image"
+        android:text="업로드"
         android:layout_weight="1"/>
 
 </LinearLayout>

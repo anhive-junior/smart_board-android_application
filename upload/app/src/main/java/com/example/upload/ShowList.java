@@ -1,16 +1,21 @@
 package com.example.upload;
 
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.GridView;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -20,25 +25,38 @@ import java.util.ArrayList;
 public class ShowList extends AppCompatActivity implements DataTransferInterface{
     public String UPLOAD_URL;
     public static String UPLOAD_KEY = "getslidelist";
+    public static ArrayList<String> itemList;
 
     private JSONArray jarray;
     private JSONObject jobject;
     private Data[] myBitmap;
     private ArrayList<String[]> property;
     private Boolean showCheckBoxes = Boolean.FALSE;
+    ArrayList<SectionDataModel> testdata = new ArrayList<>();
+    SectionDataModel sectionDataModel;
+    SingleDataModel singleDataModel;
+
+    private RecyclerView my_recycler_view;
+    private RecyclerViewDataAdapter adapter;
+    private Progress progress;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.showlist);
-        System.out.println("test");
+        setContentView(R.layout.showlist_test);
+
+        itemList = new ArrayList<>();
         property = new ArrayList<>();
         property.add(new String[]{"func", UPLOAD_KEY});
 
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        progress = new Progress(ShowList.this, ShowList.this, 0, 50);
+
+        //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        UPLOAD_URL = Login.UPLOAD_URL;
         showlist(property);
     }
+
 
     public void setValue(String key, String lst) {
         property.clear();
@@ -65,42 +83,39 @@ public class ShowList extends AppCompatActivity implements DataTransferInterface
         }
     }
 
+
     public void showlist(final ArrayList<String[]> data){
-        class Process extends AsyncTask<Void,Void,Data[]>{
-            ProgressDialog loading;
+        class Process extends AsyncTask<Void,Void,ArrayList> {
             RequestHandler rh = new RequestHandler(getApplicationContext());
 
             @Override
             protected void onPreExecute() {
-                loading = ProgressDialog.show(ShowList.this, "Loading", "Please wait...",true,true);
+                progress.show();
             }
 
             @Override
-            protected void onPostExecute(Data[] s) {
-                loading.dismiss();
-                myBitmap = s;
+            protected void onPostExecute(ArrayList s) {
+                progress.setMax(100);
 
-                if(myBitmap!=null) {
-                    if (UPLOAD_KEY == "getslidelist") {
-                        // 커스텀 아답타 생성
-                        final MyAdapter adapter = new MyAdapter(getApplicationContext(), R.layout.row, s, showCheckBoxes, myBitmap, ShowList.this, ShowList.this);
-
-                        GridView gv = (GridView) findViewById(R.id.gridview);
-                        gv.setAdapter(adapter);
-                    } else {
-                        //finish();
-                        //startActivity(getIntent());
-                        property.clear();
-                        UPLOAD_KEY = "getslidelist";
-                        property.add(new String[]{"func", UPLOAD_KEY});
-                        showlist(property);
-                    }
+                if (UPLOAD_KEY == "getslidelist") {
+                    System.out.println(321);
+                    my_recycler_view = (RecyclerView) findViewById(R.id.my_recycler_view);
+                    //my_recycler_view.setHasFixedSize(true);
+                    adapter = new RecyclerViewDataAdapter(getApplicationContext(), ShowList.this, ShowList.this, testdata);
+                    my_recycler_view.setLayoutManager(new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false));
+                    my_recycler_view.setAdapter(adapter);
+                    System.out.println(543);
+                }else{
+                    property.clear();
+                    UPLOAD_KEY = "getslidelist";
+                    property.add(new String[]{"func", UPLOAD_KEY});
+                    showlist(property);
                 }
 
             }
 
             @Override
-            protected Data[] doInBackground(Void... params) {
+            protected ArrayList doInBackground(Void... params) {
                 String temp1 = rh.sendPostRequest(UPLOAD_URL, data);
 
                 if(temp1==null)
@@ -108,26 +123,8 @@ public class ShowList extends AppCompatActivity implements DataTransferInterface
 
                 System.out.println(temp1);
 
-                Data[] result = ParseJson(temp1);
-
-                if(UPLOAD_KEY == "getslidelist") {
-                    try {
-                        for (int i = 0; i < result.length; i++) {
-                            URL url = new URL("http://" + result[i].thumbpath);
-                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                            connection.setReadTimeout(15000);
-                            connection.setConnectTimeout(15000);
-                            connection.setDoInput(true);
-                            connection.connect();
-                            InputStream input = connection.getInputStream();
-                            result[i].thumb = BitmapFactory.decodeStream(input);
-                            connection.disconnect();
-                        }
-                    } catch (IOException e) {
-                        System.out.println(e);
-                        System.out.println("errorr");
-                    }
-                }
+                ArrayList result = ParseJson(temp1);
+                System.out.println("tset2");
                 return result;
             }
         }
@@ -164,7 +161,7 @@ public class ShowList extends AppCompatActivity implements DataTransferInterface
         return Bitmap.createScaledBitmap(source, newWidth, newHeight, true);
     }
 
-    public Data[] ParseJson(String s){
+    public ArrayList ParseJson(String s){
         try {
             //System.out.println(s);
             jobject = new JSONObject(s);
@@ -188,10 +185,8 @@ public class ShowList extends AppCompatActivity implements DataTransferInterface
             System.out.println(e);
         }
 
-        Data[] data = new Data[jarray.length()];
-        ArrayList<SectionDataModel> testdata = new ArrayList<>();
-        SectionDataModel sectionDataModel = null;
-        SingleDataModel singleDataModel;
+        testdata.clear();
+        sectionDataModel = null;
         try {
             for(int i=0; i < jarray.length(); i++){
                 jobject = jarray.getJSONObject(i);
@@ -206,28 +201,37 @@ public class ShowList extends AppCompatActivity implements DataTransferInterface
                 singleDataModel.filepath = jobject.getString("test_file");
                 singleDataModel.thumbpath = jobject.getString("test_thumb");
                 singleDataModel.name = jobject.getString("photo");
+                itemList.add(jobject.getString("test_file"));
+                try {
+                    URL url = new URL("http://" + singleDataModel.thumbpath);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setReadTimeout(15000);
+                    connection.setConnectTimeout(15000);
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    singleDataModel.thumb = BitmapFactory.decodeStream(input);
+                    connection.disconnect();
+                } catch (IOException e) {
+                    System.out.println(e);
+                    System.out.println("errorr");
+                }
 
                 sectionDataModel.item.add(singleDataModel);
-
-
-
-                data[i] = new Data();
-                data[i].filepath = jobject.getString("test_file");
-                data[i].thumbpath = jobject.getString("test_thumb");
-                data[i].name = jobject.getString("photo");
             }
             testdata.add(sectionDataModel);
+
             for(int i=0;i<testdata.size();i++){
                 System.out.println(testdata.get(i).time);
                 for(int j=0;j<testdata.get(i).item.size();j++){
                     System.out.println(testdata.get(i).item.get(j).name);
                 }
             }
+
         }catch (JSONException e){
             System.out.println(e);
         }
-        return data;
+        return testdata;
     }
 
 }
-

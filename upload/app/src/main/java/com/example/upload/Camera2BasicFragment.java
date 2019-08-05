@@ -58,6 +58,7 @@ import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -473,17 +474,43 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        System.out.println(1);
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
     }
 
+    Progress progress;
+
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        UPLOAD_URL = ((GlobalVar)getActivity().getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        //UPLOAD_URL = ((GlobalVar)getActivity().getApplication()).getMyAddr() + "/signage/s00_signage.php";
+        UPLOAD_URL = Login.UPLOAD_URL;
+        System.out.println(2);
+        final Button picture = (Button)getActivity().findViewById(R.id.picture);
+        final LinearLayout afterpicture = (LinearLayout)getActivity().findViewById(R.id.afterpicture);
+        caption = (EditText)getActivity().findViewById(R.id.caption);
+
+        progress = new Progress(getActivity(), getActivity(), 0, 25);
+
         view.findViewById(R.id.picture).setOnClickListener(this);
         view.findViewById(R.id.upload).setOnClickListener(this);
         view.findViewById(R.id.cancel).setOnClickListener(this);
         view.findViewById(R.id.selfie).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+
+        mTextureView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:{
+                        takePicture();
+                        picture.setVisibility(View.GONE);
+                        afterpicture.setVisibility(View.VISIBLE);
+                        caption.setVisibility(View.VISIBLE);
+                    }
+                }
+                return false;
+            }
+        });
 
         mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -519,13 +546,20 @@ public class Camera2BasicFragment extends Fragment
         System.out.println("Pause");
         stopBackgroundThread();
         super.onPause();
-        mSensorManager.unregisterListener(deviceOrientation.getEventListener());
+        try{
+            mSensorManager.unregisterListener(deviceOrientation.getEventListener());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void requestCameraPermission() {
         if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            System.out.println(3);
+
             new ConfirmationDialog().show(getChildFragmentManager(), FRAGMENT_DIALOG);
         } else {
+            System.out.println(7);
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         }
     }
@@ -535,10 +569,12 @@ public class Camera2BasicFragment extends Fragment
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                System.out.println(5);
                 ErrorDialog.newInstance(getString(R.string.request_permission))
                         .show(getChildFragmentManager(), FRAGMENT_DIALOG);
             }
         } else {
+            System.out.println(6);
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
@@ -842,11 +878,14 @@ public class Camera2BasicFragment extends Fragment
      * Initiate a still image capture.
      */
     private void takePicture() {
+        start = System.currentTimeMillis();
         if (facing == CameraCharacteristics.LENS_FACING_BACK) {
             lockFocus();
         } else {
             captureStillPicture();
         }
+        end = System.currentTimeMillis();
+        System.out.println((end - start)/1000.0);
     }
 
     /**
@@ -998,8 +1037,7 @@ public class Camera2BasicFragment extends Fragment
                 start = System.currentTimeMillis();
 
 
-                final ProgressDialog loading;
-                loading = ProgressDialog.show(getContext(), "Uploading Image", "Please wait...",true,true);
+                progress.show();
 
                 /*
                 Glide.with(getActivity())
@@ -1059,7 +1097,7 @@ public class Camera2BasicFragment extends Fragment
                 cut = filename.lastIndexOf('/');
                 filename = filename.substring(cut + 1);
 
-                uploadImage(bitmap, loading, filename);
+                uploadImage(bitmap, filename);
 
                 end = System.currentTimeMillis();
                 System.out.println((end - start)/1000.0);
@@ -1252,6 +1290,7 @@ public class Camera2BasicFragment extends Fragment
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Fragment parent = getParentFragment();
+            System.out.println(4);
             return new AlertDialog.Builder(getActivity())
                     .setMessage(R.string.request_permission)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -1277,19 +1316,18 @@ public class Camera2BasicFragment extends Fragment
 
 
 
-    private void uploadImage(final Bitmap bitmap, final ProgressDialog loading, final String filename){
+    private void uploadImage(final Bitmap bitmap, final String filename){
         class Process extends AsyncTask<Bitmap,Void,String> {
-            //ProgressDialog loading;
             RequestHandler rh = new RequestHandler(getActivity().getApplicationContext());
 
             @Override
             protected void onPreExecute() {
-                //loading = ProgressDialog.show(getContext(), "Uploading Image", "Please wait...",true,true);
+                progress.setMax(50);
             }
 
             @Override
             protected void onPostExecute(String s) {
-                loading.dismiss();
+                progress.setMax(100);
 
                 Toast.makeText(getActivity().getApplicationContext(), s,Toast.LENGTH_LONG).show();
             }

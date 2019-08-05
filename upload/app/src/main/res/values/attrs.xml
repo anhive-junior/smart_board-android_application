@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SpringIndicator">
+
+        <!--tab text color -->
+        <attr name="siTextColor" format="reference"/>
+
+        <!--tab text color which is selected-->
+        <attr name="siSelectedTextColor" format="reference"/>
+
+        <!--tab item bg -->
+        <attr name="siTextBg" format="reference"/>
+
+        <!--tab text size-->
+        <attr name="siTextSize" format="dimension"/>
+
+        <!--indicator bg color-->
+        <attr name="siIndicatorColor" format="reference"/>
+
+        <!--indicator bg colors. should equals your titles count-->
+        <attr name="siIndicatorColors" format="reference"/>
+
+        <!--max indicator radius-->
+        <attr name="siRadiusMax" format="dimension"/>
+
+        <!--min indicator radius when moving-->
+        <attr name="siRadiusMin" format="dimension"/>
+
+    </declare-styleable>
+
+
+    <declare-styleable name="DonutProgress">
+        <attr name="donut_progress" format="integer"/>
+        <attr name="donut_max" format="integer"/>
+        <attr name="donut_unfinished_color" format="color"/>
+        <attr name="donut_finished_color" format="color"/>
+        <attr name="donut_finished_stroke_width" format="dimension"/>
+        <attr name="donut_unfinished_stroke_width" format="dimension"/>
+        <attr name="donut_text_size" format="dimension"/>
+        <attr name="donut_text_color" format="color"/>
+        <attr name="donut_text" format="string"/>
+        <attr name="donut_prefix_text" format="string"/>
+        <attr name="donut_suffix_text" format="string"/>
+        <attr name="donut_background_color" format="color"/>
+    </declare-styleable>
+</resources>
