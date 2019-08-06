@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -28,11 +29,6 @@ public class SelectBoard extends AppCompatActivity implements Button.OnClickList
         //load();
         boardList = new ArrayList<>();
 
-        boardList.add("test1");
-        boardList.add("test2");
-        boardList.add("test1");
-        boardList.add("test2");
-        boardList.add("test1");
         boardList.add(null);
         boardNum = boardList.size();
 
@@ -42,6 +38,26 @@ public class SelectBoard extends AppCompatActivity implements Button.OnClickList
         my_recycler_view.setLayoutManager(new GridLayoutManager(this, 3));
         my_recycler_view.setAdapter(adapter);
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("res");
+        if (resultCode == 1234 && requestCode == 1111) {
+            System.out.println(boardList);
+            boardList.remove(boardList.size() - 1);
+            System.out.println(boardList);
+            System.out.println(data.getExtras());
+            boardList.add(data.getStringExtra("boardName"));
+            System.out.println(boardList);
+            boardList.add(null);
+            System.out.println(boardList);
+            adapter.notifyDataSetChanged();
+            Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     @Override
     public void onClick(View view){

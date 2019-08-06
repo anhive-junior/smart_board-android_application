@@ -1,10 +1,7 @@
 package com.example.upload;
 
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -16,7 +13,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,7 +28,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-public class Login extends AppCompatActivity implements Button.OnClickListener {
+public class LoginTest extends AppCompatActivity implements Button.OnClickListener {
     public static String UPLOAD_URL;
     private String loginUrl;
     private String UPLOAD_KEY;
@@ -37,22 +36,21 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
     private Button buttonLogin;
     private EditText edittextID;
     private EditText edittextPassword;
-    private EditText edittextIP;
-    private EditText edittextPort;
-    private EditText edittextRest;
     private String varID;
     private String varPassword;
-    private String varIP;
-    private String varPort;
-    private String varRest;
     private CheckBox checkboxAutologin;
     private Progress progress;
 
     private SharedPreferences appData;//로그인정보 저장매체
     private boolean autoLogin;//자동로그인여부
     Intent sendIntent;
+    private Intent intent;
     private WifiManager wifiManager;
+    private String boardName;
 
+    private String varIP;
+    private String varPort;
+    private String varRest;
 
     void readWepConfig()
     {
@@ -72,6 +70,7 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        boardName = intent.getStringExtra("boardName");
         wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         System.out.println(wifiManager.getWifiState());
@@ -103,16 +102,8 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
         System.out.println(" ");
         System.out.println(wifiManager.getDhcpInfo());
         System.out.println(" ");*/
-        new Thread(new Server()).start();
-
 
         /* GIve the Server some time for startup */
-
-        try {
-            Thread.sleep(500);
-
-        } catch (InterruptedException e) { }
-
 
 
         // 설정값 불러오기
@@ -132,22 +123,16 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
         buttonLogin.setOnClickListener(this);
 
         checkboxAutologin = (CheckBox) findViewById(R.id.checkbox_autologin);
-        edittextIP = (EditText) findViewById(R.id.editText_ip);
-        edittextPort = (EditText) findViewById(R.id.editText_port);
         edittextID = (EditText) findViewById(R.id.editText_id);
         edittextPassword = (EditText) findViewById(R.id.editText_password);
-        edittextRest = (EditText) findViewById(R.id.editText_rest);
 
-        progress = new Progress(Login.this, Login.this, 0, 50);
+        progress = new Progress(LoginTest.this, LoginTest.this, 0, 50);
 
         progress.show();
         // 이전에 로그인 정보를 저장시킨 기록이 있다면
         if (autoLogin) {
             edittextID.setText(varID);
             edittextPassword.setText(varPassword);
-            edittextIP.setText(varIP);
-            edittextPort.setText(varPort);
-            edittextRest.setText(varRest);
             checkboxAutologin.setChecked(autoLogin);
         }
 
@@ -164,9 +149,6 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
             case R.id.button_login :
                 varID = edittextID.getText().toString().trim();
                 varPassword = edittextPassword.getText().toString().trim();
-                varIP = edittextIP.getText().toString().trim();
-                varPort = edittextPort.getText().toString().trim();
-                varRest = edittextRest.getText().toString().trim();
 
                 ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
                 //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
@@ -175,17 +157,6 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
                 UPLOAD_KEY = "login";
 
                 login(loginUrl, UPLOAD_KEY, varID, varPassword);
-
-
-                Intent sendIntent = new Intent("com.example.upload.SEND_BROAD_CAST");
-                sendIntent.putExtra("isBoolean", true);
-                sendIntent.putExtra("sendInteger", 123);
-                sendIntent.putExtra("sendString", "Intent String");
-                sendBroadcast(sendIntent);
-
-
-
-
                 break ;
         }
     }
@@ -200,9 +171,6 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
         editor.putBoolean("SAVE_LOGIN_DATA", checkboxAutologin.isChecked());
         editor.putString("ID", edittextID.getText().toString().trim());
         editor.putString("PWD", edittextPassword.getText().toString().trim());
-        editor.putString("IP", edittextIP.getText().toString().trim());
-        editor.putString("PORT", edittextPort.getText().toString().trim());
-        editor.putString("REST", edittextRest.getText().toString().trim());
         editor.putString("KEY", UPLOAD_KEY.trim());
 
         // apply, commit 을 안하면 변경된 내용이 저장되지 않음
@@ -213,13 +181,13 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
     private void load() {
         // SharedPreferences 객체.get타입( 저장된 이름, 기본값 )
         // 저장된 이름이 존재하지 않을 시 기본값
-        autoLogin = appData.getBoolean("SAVE_LOGIN_DATA", false);
-        varID = appData.getString("ID", "");
-        varPassword = appData.getString("PWD", "");
-        UPLOAD_KEY = appData.getString("KEY", "");
-        varIP = appData.getString("IP", "");
-        varPort = appData.getString("PORT", "");
-        varRest = appData.getString("REST", "");
+        autoLogin = appData.getBoolean(boardName + "_SAVE_LOGIN_DATA", false);
+        varID = appData.getString(boardName + "_ID", "");
+        varPassword = appData.getString(boardName + "_PWD", "");
+        UPLOAD_KEY = appData.getString(boardName + "_KEY", "");
+        varIP = appData.getString(boardName + "_IP", "");
+        varPort = appData.getString(boardName + "_PORT", "");
+        varRest = appData.getString(boardName + "_REST", "");
 
         ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
         //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
@@ -272,8 +240,7 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
                 property.add(new String[]{"user_code", id});
                 property.add(new String[]{"input_code", password});
 
-                //String result = rh.sendPostRequest(address, property);
-                String result = rh.sendtest("192.168.219.255");
+                String result = rh.sendPostRequest(address, property);
 
                 try{
                     result = ParseJson(result);

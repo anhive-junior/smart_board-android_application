@@ -4,37 +4,33 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/editText_boardname"
+        android:id="@+id/editText_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Board Name"
-        android:text="test"
+        android:hint="ID"
+        android:text="sam"
         android:inputType="textPersonName"/>
 
     <EditText
-        android:id="@+id/editText_ssid"
+        android:id="@+id/editText_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:text="guest-hive"
-        android:hint="SSID"
-        android:inputType="text"
-        />
-
-    <EditText
-        android:id="@+id/editText_pwd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="20622065"
-        android:hint="PWD"
-        android:inputType="text"/>
+        android:hint="Password"
+        android:text="sam"
+        android:inputType="textPassword" />
 
     <Button
-        android:id="@+id/button_set"
+        android:id="@+id/button_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="설정 완료" />
+        android:text="Login" />
+
+    <CheckBox
+        android:id="@+id/checkbox_autologin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="자동 로그인"/>
 
 </LinearLayout>

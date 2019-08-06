@@ -1,134 +1,72 @@
 package com.example.upload;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.example.upload.Login.UPLOAD_URL;
+import static com.example.upload.UpLoadImage.getStringImage;
+
 public class SelectBoardSetProperty extends AppCompatActivity {
-    private HashMap<String, String> playworkdata;
-    private Intent intent;
-    EditText mEditText1;
-    EditText mEditText2;
-    EditText mEditText3;
-    CheckBox mCheckBox1;
-    CheckBox mCheckBox2;
+    EditText boardName;
+    EditText ssid;
+    EditText pwd;
+    Button setComplete;
+    private ArrayList<String[]> property;
+    private ProgressDialog loading;
+
+    private SharedPreferences appData;//로그인정보 저장매체
+
+    private String UPLOAD_URL = "http://192.168.201.1:80/signage/s00_signage.php";
 
     @Override
     protected void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.popup);
+        setContentView(R.layout.selectboardsetproperty);
 
-        playworkdata = new HashMap<>();
+        setComplete = (Button) findViewById(R.id.button_set);
+        boardName = (EditText) findViewById(R.id.editText_boardname);
+        ssid = (EditText) findViewById(R.id.editText_ssid);
+        pwd = (EditText) findViewById(R.id.editText_pwd);
 
-        playworkdata = ((GlobalVar)getApplication()).getPlayworkdata();
 
-        intent = getIntent();
-        mEditText1 = findViewById(R.id.editText);
-        mEditText2 = findViewById(R.id.editText2);
-        mEditText3 = findViewById(R.id.editText3);
-        mCheckBox1 = findViewById(R.id.checkBox1);
-        mCheckBox2 = findViewById(R.id.checkBox2);
+        property = new ArrayList<>();
+        property.add(new String[]{"func", "apsetting"});
 
-        switch(intent.getExtras().getInt("name")){
-            case 1:
-                mEditText1.setVisibility(View.VISIBLE);
-                mEditText2.setVisibility(View.VISIBLE);
-                mEditText3.setVisibility(View.VISIBLE);
-                mEditText1.setText(playworkdata.get("time_begin"));
-                mEditText2.setText(playworkdata.get("time_days"));
-                mEditText3.setText(playworkdata.get("time_hours"));
-                break;
-            case 2:
-                mEditText1.setVisibility(View.VISIBLE);
-                mEditText1.setText(playworkdata.get("count_max"));
-                break;
-            case 8:
-                mEditText1.setVisibility(View.VISIBLE);
-                mEditText1.setText(playworkdata.get("reload_interval"));
-                break;
-            case 10:
-                mCheckBox1.setVisibility(View.VISIBLE);
-                mCheckBox2.setVisibility(View.VISIBLE);
-                mCheckBox1.setText("순차");
-                mCheckBox2.setText("무작위");
-                if(!playworkdata.get("squential_play").equals("_"))
-                    mCheckBox1.setChecked(true);
-                if(!playworkdata.get("randon_play").equals("_"))
-                    mCheckBox2.setChecked(true);
-                break;
-            case 11:
-                mEditText1.setVisibility(View.VISIBLE);
-                mEditText1.setText(playworkdata.get("slide_interval"));
-                break;
-            case 12:
-                mCheckBox1.setVisibility(View.VISIBLE);
-                mCheckBox2.setVisibility(View.VISIBLE);
-                mCheckBox1.setText("사진맞춤");
-                mCheckBox2.setText("화면맞춤(줌)");
-                if(!playworkdata.get("photo_zoom").equals("_"))
-                    mCheckBox1.setChecked(true);
-                if(!playworkdata.get("screen_zoom").equals("_"))
-                    mCheckBox2.setChecked(true);
-                break;
-            default:
-                break;
-        }
-        setResult(1234);
+
+        setComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                System.out.println(boardName.getText().toString());
+                intent.putExtra("boardName", boardName.getText().toString());
+                setResult(1234, intent);
+                loading = ProgressDialog.show(SelectBoardSetProperty.this, "Uploading Image", "Please wait...",true,true);
+                sendinfo();
+            }
+        });
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch(intent.getExtras().getInt("name")){
-            case 1:
-                playworkdata.put("time_begin", mEditText1.getText().toString());
-                playworkdata.put("time_days", mEditText2.getText().toString());
-                playworkdata.put("time_hours", mEditText3.getText().toString());
-                break;
-            case 2:
-                playworkdata.put("count_max", mEditText1.getText().toString());
-                break;
-            case 8:
-                playworkdata.put("reload_interval", mEditText1.getText().toString());
-                break;
-            case 10:
-                if(mCheckBox1.isChecked())
-                    playworkdata.put("squential_play", "✔");
-                else
-                    playworkdata.put("squential_play", "_");
-                if(mCheckBox2.isChecked())
-                    playworkdata.put("randon_play", "✔");
-                else
-                    playworkdata.put("randon_play", "_");
-                break;
-            case 11:
-                playworkdata.put("slide_interval", mEditText1.getText().toString());
-                break;
-            case 12:
-                if(mCheckBox1.isChecked())
-                    playworkdata.put("photo_zoom", "✔");
-                else
-                    playworkdata.put("photo_zoom", "_");
-                if(mCheckBox2.isChecked())
-                    playworkdata.put("screen_zoom", "✔");
-                else
-                    playworkdata.put("screen_zoom", "_");
-                break;
-            default:
-                break;
-        }
-        ((GlobalVar)getApplication()).setPlayworkdata(playworkdata);
-        setResult(333);
         finish();
         /*
         //바깥레이어 클릭시 안닫히게
@@ -144,30 +82,6 @@ public class SelectBoardSetProperty extends AppCompatActivity {
         if( event.getAction() == KeyEvent.ACTION_DOWN ){ //키 다운 액션 감지
             if( keyCode == KeyEvent.KEYCODE_BACK ){ //BackKey 다운일 경우만 처리
                 //BackKey 이벤트일 경우 해야할 코드 작성
-                switch(intent.getExtras().getInt("name")){
-                    case 1:
-                        playworkdata.put("time_begin", mEditText1.getText().toString());
-                        playworkdata.put("time_days", mEditText2.getText().toString());
-                        playworkdata.put("time_hours", mEditText3.getText().toString());
-                        break;
-                    case 2:
-                        playworkdata.put("count_max", mEditText1.getText().toString());
-                        break;
-                    case 8:
-                        playworkdata.put("reload_interval", mEditText1.getText().toString());
-                        break;
-                    case 10:
-                        break;
-                    case 11:
-                        playworkdata.put("slide_interval", mEditText1.getText().toString());
-                        break;
-                    case 12:
-                        break;
-                    default:
-                        break;
-                }
-                ((GlobalVar)getApplication()).setPlayworkdata(playworkdata);
-                setResult(333);
                 finish();
 
                 return true; // 리턴이 true인 경우 기존 BackKey의 기본액션이 그대로 행해 지게 됩니다.
@@ -177,6 +91,47 @@ public class SelectBoardSetProperty extends AppCompatActivity {
             }
         }
         return super.onKeyDown( keyCode, event );
+    }
+
+
+    private void sendinfo(){
+        class Process extends AsyncTask<Void,Void,String> {
+            RequestHandler rh = new RequestHandler(getApplicationContext());
+
+            @Override
+            protected void onPreExecute() {
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+
+                System.out.println(s);
+                new Thread(new Server()).start();
+                while(Server.result == null);
+
+                SharedPreferences.Editor editor = appData.edit();
+                editor.putString(boardName.getText().toString() + "_IP", Server.result);
+                editor.putString(boardName.getText().toString() + "_PORT", "80");
+                editor.putString(boardName.getText().toString() + "_REST", "/signage/s00_signage.php");
+
+                Toast.makeText(getApplicationContext(), s,Toast.LENGTH_LONG).show();
+                loading.dismiss();
+                finish();
+
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                property.add(new String[]{"ap", ssid.getText().toString()});
+                property.add(new String[]{"pass", pwd.getText().toString()});
+                String result = rh.sendPostRequest(UPLOAD_URL, property);
+
+                return result;
+            }
+        }
+
+        //new Process().execute(rotatedBitmap);
+        new Process().execute();
     }
 
 }

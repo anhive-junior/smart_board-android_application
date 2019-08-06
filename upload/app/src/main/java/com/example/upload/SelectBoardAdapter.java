@@ -2,6 +2,7 @@ package com.example.upload;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<com.example.upload.
     private Activity mActivity;
     private Boolean mCheckboxVisible = Boolean.FALSE;
     private DataTransferInterface dtInterface;
+    private Intent intent;
 
     public SelectBoardAdapter(Context context, Activity activity, ArrayList<String> dataList) {
         this.dataList = dataList;
@@ -40,7 +42,7 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<com.example.upload.
     }
 
     @Override
-    public void onBindViewHolder(com.example.upload.SelectBoardAdapter.ItemRowHolder itemRowHolder, final int position) {
+    public void onBindViewHolder(final com.example.upload.SelectBoardAdapter.ItemRowHolder itemRowHolder, final int position) {
 
         final String sectionName = dataList.get(position);
 
@@ -61,12 +63,8 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<com.example.upload.
             itemRowHolder.addButtion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println(position);
-                    dataList.set(position, "test");
-                    dataList.add(null);
-                    notifyItemRemoved(position);
-                    //notifyItemInserted(position);
-                    //notifyDataSetChanged();
+                    intent = new Intent(mContext, SelectBoardSetProperty.class);
+                    mActivity.startActivityForResult(intent, 1111);
                 }
             });
         }else{
@@ -76,12 +74,12 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<com.example.upload.
         }
 
 
-
-
         itemRowHolder.itemTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(position);
+                intent = new Intent(mContext, LoginTest.class);
+                intent.putExtra("boardName", itemRowHolder.itemTitle.toString());
+                mActivity.startActivity(intent);
             }
         });
 

@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.upload">
 
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -28,12 +30,14 @@
         <activity android:name=".MainActivity2"></activity>
         <activity android:name=".UserSetting"></activity>
         <activity android:name=".SelectBoard">
-        </activity>
-        <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".Login">
+        </activity>
+        <activity android:name=".LoginTest">
         </activity>
         <activity android:name=".UpLoadImage"/>
         <activity android:name=".ShowList"/>
