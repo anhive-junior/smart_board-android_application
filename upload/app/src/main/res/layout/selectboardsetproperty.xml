@@ -12,15 +12,27 @@
         android:text="test"
         android:inputType="textPersonName"/>
 
-    <EditText
-        android:id="@+id/editText_ssid"
+    <TextView
+        android:id="@+id/textView_box"
+        android:text="액자선택"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="guest-hive"
-        android:hint="SSID"
-        android:inputType="text"
-        />
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/textView_ssid"
+        android:text="공유기선택"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_ssid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <EditText
         android:id="@+id/editText_pwd"
