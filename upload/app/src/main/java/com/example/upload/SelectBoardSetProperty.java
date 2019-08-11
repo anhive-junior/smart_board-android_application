@@ -1,5 +1,6 @@
 package com.example.upload;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -85,6 +86,7 @@ public class SelectBoardSetProperty extends AppCompatActivity {
     private String boxSecurity;
     private String routerName;
     private String routerSecurity;
+    private int temp;
 
     private String UPLOAD_URL = "http://192.168.201.1:80/signage/s00_signage.php";
 
@@ -92,6 +94,7 @@ public class SelectBoardSetProperty extends AppCompatActivity {
     protected void onCreate(Bundle saveInstanceState){
         super.onCreate(saveInstanceState);
         setContentView(R.layout.selectboardsetproperty);
+        appData = getSharedPreferences("appData", MODE_PRIVATE);
 
         property.add(new String[]{"func", "apsetting"});
 
@@ -102,6 +105,10 @@ public class SelectBoardSetProperty extends AppCompatActivity {
         router = (TextView) findViewById(R.id.textView_ssid);
 
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (!wifi.isWifiEnabled()){
+            Toast.makeText(this, "Wifi enabling...", Toast.LENGTH_LONG).show();
+            wifi.setWifiEnabled(true);
+        }
 
 
         System.out.println(wifi.getConnectionInfo().getSSID());
@@ -135,14 +142,14 @@ public class SelectBoardSetProperty extends AppCompatActivity {
             public void onClick(View v) {
                 boxList.clear();
                 try {
-                    netCount=netCount -1;
-                    while (netCount>=0){
+                    temp=netCount -1;
+                    while (temp>=0){
                         device d= new device();
-                        d.setName(wifiData.get(netCount).SSID);
-                        d.setCapabilities(wifiData.get(netCount).capabilities);
+                        d.setName(wifiData.get(temp).SSID);
+                        d.setCapabilities(wifiData.get(temp).capabilities);
                         boxList.add(d);
                         boxAdapter.notifyDataSetChanged();
-                        netCount=netCount -1;
+                        temp-=1;
                     }
                 }
                 catch (Exception e){
@@ -156,14 +163,14 @@ public class SelectBoardSetProperty extends AppCompatActivity {
             public void onClick(View v) {
                 routerList.clear();
                 try {
-                    netCount=netCount -1;
-                    while (netCount>=0){
+                    temp=netCount -1;
+                    while (temp>=0){
                         device d= new device();
-                        d.setName(wifiData.get(netCount).SSID);
-                        d.setCapabilities(wifiData.get(netCount).capabilities);
+                        d.setName(wifiData.get(temp).SSID);
+                        d.setCapabilities(wifiData.get(temp).capabilities);
                         routerList.add(d);
                         routerAdapter.notifyDataSetChanged();
-                        netCount=netCount -1;
+                        temp-=1;
                     }
                 }
                 catch (Exception e){
@@ -181,6 +188,8 @@ public class SelectBoardSetProperty extends AppCompatActivity {
 
                 boxName = d.getName();
                 boxSecurity = d.getCapabilities();
+                boxList.clear();
+                boxAdapter.notifyDataSetChanged();
             }
         });
 
@@ -193,6 +202,8 @@ public class SelectBoardSetProperty extends AppCompatActivity {
 
                 routerName = d.getName();
                 routerSecurity = d.getCapabilities();
+                routerList.clear();
+                routerAdapter.notifyDataSetChanged();
 
             }
         });
@@ -200,20 +211,37 @@ public class SelectBoardSetProperty extends AppCompatActivity {
         setComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                System.out.println(boardName.getText().toString());
-                intent.putExtra("boardName", boardName.getText().toString());
-                setResult(1234, intent);
-                connectWiFi(boxName, "DD79019089", boxSecurity);
-                while (!("\"" + boxName + "\"").equals(wifi.getConnectionInfo().getSSID()));
-                System.out.println("test11");
+                if(SelectBoard.boardList.contains(boardName.getText().toString())){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SelectBoardSetProperty.this);
+                    builder.setMessage("중복된 이름은 사용할 수 없습니다");
+                    builder.show();
+                }else{
+                    Intent intent = new Intent();
+                    System.out.println(boardName.getText().toString());
+                    intent.putExtra("boardName", boardName.getText().toString());
+                    setResult(1234, intent);
 
 
+                    SharedPreferences.Editor editor = appData.edit();
+                    editor.putInt("NUMBER OF BOARD", SelectBoard.boardNum + 1);
+                    editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString());
+                    editor.putString(Server.result, boardName.getText().toString() + "_IP");
+                    editor.putString(boardName.getText().toString() + "_PORT", "80");
+                    editor.putString(boardName.getText().toString() + "_REST", "/signage/s00_signage.php");
+                    editor.apply();
 
-                //System.out.println("success");
+                    finish();
+                    /*
+                    connectWiFi(boxName, "DD79019089", boxSecurity);
+                    while (!("\"" + boxName + "\"").equals(wifi.getConnectionInfo().getSSID()));
+                    System.out.println("test11");
 
-                loading = ProgressDialog.show(SelectBoardSetProperty.this, "Uploading Image", "Please wait...",true,true);
-                sendinfo();
+                    //System.out.println("success");
+
+                    loading = ProgressDialog.show(SelectBoardSetProperty.this, "Uploading Image", "Please wait...",true,true);
+                    sendinfo();*/
+                }
+
             }
         });
 
@@ -221,7 +249,7 @@ public class SelectBoardSetProperty extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        finish();
+        //finish();
         /*
         //바깥레이어 클릭시 안닫히게
         if(event.getAction()== MotionEvent.ACTION_OUTSIDE){
@@ -264,15 +292,24 @@ public class SelectBoardSetProperty extends AppCompatActivity {
                 new Thread(new Server()).start();
                 while(Server.result == null);
 
-                SharedPreferences.Editor editor = appData.edit();
-                editor.putString(boardName.getText().toString() + "_IP", Server.result);
-                editor.putString(boardName.getText().toString() + "_PORT", "80");
-                editor.putString(boardName.getText().toString() + "_REST", "/signage/s00_signage.php");
+                SharedPreferences preferences = getSharedPreferences("appData", MODE_PRIVATE);
+                if(preferences.getString(boardName.getText().toString() + "_IP", "") != ""){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SelectBoardSetProperty.this);
+                    builder.setMessage("이미 연결된 액자입니다");
+                    builder.show();
+                }else{
+                    SharedPreferences.Editor editor = appData.edit();
+                    editor.putInt("NUMBER OF BOARD", SelectBoard.boardNum + 1);
+                    editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString());
+                    editor.putString(Server.result, boardName.getText().toString() + "_IP");
+                    editor.putString(boardName.getText().toString() + "_PORT", "80");
+                    editor.putString(boardName.getText().toString() + "_REST", "/signage/s00_signage.php");
+                    editor.apply();
 
-                Toast.makeText(getApplicationContext(), s,Toast.LENGTH_LONG).show();
-                loading.dismiss();
-                finish();
-
+                    Toast.makeText(getApplicationContext(), s,Toast.LENGTH_LONG).show();
+                    loading.dismiss();
+                    finish();
+                }
             }
 
             @Override

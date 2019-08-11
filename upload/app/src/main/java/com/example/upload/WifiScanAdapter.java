@@ -27,25 +27,24 @@ private View.OnClickListener mOnClickListener;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View itemView = LayoutInflater.
-                    from(viewGroup.getContext()).
-                    inflate(R.layout.wifi_list, viewGroup, false);
 
-         MyViewHolder holder = new MyViewHolder(itemView);
-            itemView.setTag(holder);
-            itemView.setOnClickListener(mOnClickListener);
-            return holder;
+        View itemView = LayoutInflater.
+                from(viewGroup.getContext()).
+                inflate(R.layout.wifi_list, viewGroup, false);
+
+        MyViewHolder holder = new MyViewHolder(itemView);
+        itemView.setTag(holder);
+        itemView.setOnClickListener(mOnClickListener);
+        return holder;
 
     }
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            SelectBoardSetProperty.device device=wifiList.get(position);
+            String name=device.getName().toString();
 
-
-           SelectBoardSetProperty.device device=wifiList.get(position);
-           String name=device.getName().toString();
-
-             ((MyViewHolder) holder).vName.setText(name);
-             ((MyViewHolder) holder).vName.setTag(device);
+            ((MyViewHolder) holder).vName.setText(name);
+            ((MyViewHolder) holder).vName.setTag(device);
 
 
             ((MyViewHolder) holder).context = context;

@@ -19,31 +19,37 @@ public class SelectBoard extends AppCompatActivity implements Button.OnClickList
     private SharedPreferences appData;
     private Intent in;
 
-    private int boardNum;
-    private ArrayList<String> boardList;
+    public static int boardNum = 0;
+    public static ArrayList<String> boardList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.selectboard);
-        //load();
+        appData = getSharedPreferences("appData", MODE_PRIVATE);
         boardList = new ArrayList<>();
+        try{
+            load();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         boardList.add(null);
-        boardNum = boardList.size();
+        //boardNum = boardList.size();
 
         my_recycler_view = (RecyclerView) findViewById(R.id.my_recycler_view);
         //my_recycler_view.setHasFixedSize(true);
         adapter = new SelectBoardAdapter(getApplicationContext(), SelectBoard.this, boardList);
         my_recycler_view.setLayoutManager(new GridLayoutManager(this, 3));
         my_recycler_view.setAdapter(adapter);
+
+
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        System.out.println("res");
         if (resultCode == 1234 && requestCode == 1111) {
             System.out.println(boardList);
             boardList.remove(boardList.size() - 1);
@@ -105,8 +111,9 @@ public class SelectBoard extends AppCompatActivity implements Button.OnClickList
         // SharedPreferences 객체.get타입( 저장된 이름, 기본값 )
         // 저장된 이름이 존재하지 않을 시 기본값
         boardNum = appData.getInt("NUMBER OF BOARD", 0);
+        System.out.println(boardNum);
         boardList = new ArrayList<>();
-        for(int i=0;i<boardNum;i++){
+        for(int i=1;i<=boardNum;i++){
             boardList.add(appData.getString("BOARD_" + i, ""));
         }
     }

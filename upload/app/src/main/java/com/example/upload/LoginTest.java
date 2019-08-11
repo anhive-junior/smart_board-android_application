@@ -69,8 +69,10 @@ public class LoginTest extends AppCompatActivity implements Button.OnClickListen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        intent = getIntent();
 
         boardName = intent.getStringExtra("boardName");
+        /*
         wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         System.out.println(wifiManager.getWifiState());
@@ -95,7 +97,6 @@ public class LoginTest extends AppCompatActivity implements Button.OnClickListen
 
 
         //readWepConfig();
-        /*
         System.out.println(wifiManager.getConfiguredNetworks());
         System.out.println(" ");
         System.out.println(wifiManager.getConnectionInfo());
@@ -108,7 +109,9 @@ public class LoginTest extends AppCompatActivity implements Button.OnClickListen
 
         // 설정값 불러오기
         appData = getSharedPreferences("appData", MODE_PRIVATE);
+        System.out.println(1);
         load();
+        System.out.println(2);
 
         //자동로그인
         if(autoLogin) {
@@ -117,7 +120,7 @@ public class LoginTest extends AppCompatActivity implements Button.OnClickListen
         }
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.login_test);
 
         buttonLogin = (Button) findViewById(R.id.button_login);
         buttonLogin.setOnClickListener(this);
@@ -141,10 +144,6 @@ public class LoginTest extends AppCompatActivity implements Button.OnClickListen
 
     @Override
     public void onClick(View view){
-        // Kickoff the Client
-
-        new Thread(new Client()).start();
-        System.out.println(Server.result);
         switch (view.getId()) {
             case R.id.button_login :
                 varID = edittextID.getText().toString().trim();
@@ -181,6 +180,7 @@ public class LoginTest extends AppCompatActivity implements Button.OnClickListen
     private void load() {
         // SharedPreferences 객체.get타입( 저장된 이름, 기본값 )
         // 저장된 이름이 존재하지 않을 시 기본값
+
         autoLogin = appData.getBoolean(boardName + "_SAVE_LOGIN_DATA", false);
         varID = appData.getString(boardName + "_ID", "");
         varPassword = appData.getString(boardName + "_PWD", "");
@@ -188,11 +188,15 @@ public class LoginTest extends AppCompatActivity implements Button.OnClickListen
         varIP = appData.getString(boardName + "_IP", "");
         varPort = appData.getString(boardName + "_PORT", "");
         varRest = appData.getString(boardName + "_REST", "");
+        varRest = appData.getString(boardName + "_REST", "");
 
         ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
         //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
         loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
         UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
+        System.out.println(loginUrl);
+        System.out.println(UPLOAD_URL);
+        System.out.println(varRest);
     }
 
 

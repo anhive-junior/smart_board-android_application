@@ -8,13 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Board Name"
+        android:hint="액자 이름"
         android:text="test"
         android:inputType="textPersonName"/>
 
     <TextView
         android:id="@+id/textView_box"
         android:text="액자선택"
+        android:textSize="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -26,6 +27,7 @@
     <TextView
         android:id="@+id/textView_ssid"
         android:text="공유기선택"
+        android:textSize="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -40,7 +42,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:text="20622065"
-        android:hint="PWD"
+        android:hint="비밀번호"
         android:inputType="text"/>
 
     <Button

@@ -78,7 +78,8 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<com.example.upload.
             @Override
             public void onClick(View v) {
                 intent = new Intent(mContext, LoginTest.class);
-                intent.putExtra("boardName", itemRowHolder.itemTitle.toString());
+                System.out.println(itemRowHolder.itemTitle.getText().toString());
+                intent.putExtra("boardName", itemRowHolder.itemTitle.getText().toString());
                 mActivity.startActivity(intent);
             }
         });
