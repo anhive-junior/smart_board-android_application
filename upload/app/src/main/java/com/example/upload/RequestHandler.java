@@ -232,12 +232,14 @@ public class RequestHandler {
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 //BufferedReader br = new BufferedReader(in);
                 response = br.readLine();
+                if(response == null) response = "success";
             } else {
                 response = "Error Registering";
             }
         } catch (Exception e) {
+            response = "Error Registering";
             e.printStackTrace();
-            return e.getMessage();
+            return response;
         }
 
         return response;

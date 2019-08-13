@@ -9,11 +9,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -32,6 +35,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +92,12 @@ public class SelectBoardSetProperty extends AppCompatActivity {
     private String routerSecurity;
     private int temp;
 
+    private ConnectivityManager connManager;
+
+    private ConnectivityManager cm;
+    private boolean isWiFi;
+    private NetworkInfo activeNework;
+
     private String UPLOAD_URL = "http://192.168.201.1:80/signage/s00_signage.php";
 
     @Override
@@ -95,6 +105,7 @@ public class SelectBoardSetProperty extends AppCompatActivity {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.selectboardsetproperty);
         appData = getSharedPreferences("appData", MODE_PRIVATE);
+        cm = (ConnectivityManager)SelectBoardSetProperty.this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         property.add(new String[]{"func", "apsetting"});
 
@@ -109,6 +120,18 @@ public class SelectBoardSetProperty extends AppCompatActivity {
             Toast.makeText(this, "Wifi enabling...", Toast.LENGTH_LONG).show();
             wifi.setWifiEnabled(true);
         }
+
+/*
+        int ipAddress = wifi.getConnectionInfo().getIpAddress();
+        String ip = String.format("%d.%d.%d.%d", (ipAddress & 0xff),(ipAddress >> 8 & 0xff),(ipAddress >> 16 & 0xff),(ipAddress >> 24 & 0xff));
+        ip = ip.substring(0, ip.lastIndexOf(".") + 1) + "255";
+
+        //Thread t = new Thread(new Client(ip));
+        //Thread t = new Thread(new Client(ip));
+        //t.start();
+        //Thread t1 = new Thread(new Server());
+        //t1.start();
+*/
 
 
         System.out.println(wifi.getConnectionInfo().getSSID());
@@ -216,12 +239,7 @@ public class SelectBoardSetProperty extends AppCompatActivity {
                     builder.setMessage("중복된 이름은 사용할 수 없습니다");
                     builder.show();
                 }else{
-                    Intent intent = new Intent();
-                    System.out.println(boardName.getText().toString());
-                    intent.putExtra("boardName", boardName.getText().toString());
-                    setResult(1234, intent);
-
-
+                    /*
                     SharedPreferences.Editor editor = appData.edit();
                     editor.putInt("NUMBER OF BOARD", SelectBoard.boardNum + 1);
                     editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString());
@@ -230,20 +248,36 @@ public class SelectBoardSetProperty extends AppCompatActivity {
                     editor.putString(boardName.getText().toString() + "_REST", "/signage/s00_signage.php");
                     editor.apply();
 
-                    finish();
-                    /*
-                    connectWiFi(boxName, "DD79019089", boxSecurity);
-                    while (!("\"" + boxName + "\"").equals(wifi.getConnectionInfo().getSSID()));
-                    System.out.println("test11");
+                    finish();*/
+
+                    System.out.println(1111);
+                    System.out.println(boxName);
+                    System.out.println(1111);
+                    connectWiFi(boxName, "surprisebox", boxSecurity);
+
+
+
+                    do{
+                        try{
+                            activeNework = cm.getActiveNetworkInfo();
+                            isWiFi = activeNework.getType() == ConnectivityManager.TYPE_WIFI;
+                        }catch (Exception e){
+                            isWiFi = false;
+                        }
+                        System.out.println(wifi.getConnectionInfo().getSSID());
+                        System.out.println(isWiFi);
+                    }while(!("\"" + boxName + "\"").equals(wifi.getConnectionInfo().getSSID()) && isWiFi);
+
 
                     //System.out.println("success");
 
                     loading = ProgressDialog.show(SelectBoardSetProperty.this, "Uploading Image", "Please wait...",true,true);
-                    sendinfo();*/
+                    sendinfo();
                 }
 
             }
         });
+
 
     }
 
@@ -287,38 +321,84 @@ public class SelectBoardSetProperty extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 System.out.println(s);
+                /*
+                if(s.equals("Error Registering")){
+                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                    return;
+                }*/
                 connectWiFi(routerName, pwd.getText().toString(), routerSecurity);
-                while (!("\"" + routerName + "\"").equals(wifi.getConnectionInfo().getSSID()));
-                new Thread(new Server()).start();
-                while(Server.result == null);
+                do{
+                    try{
+                        activeNework = cm.getActiveNetworkInfo();
+                        isWiFi = activeNework.getType() == ConnectivityManager.TYPE_WIFI;
+                    }catch (Exception e){
+                        isWiFi = false;
+                    }
+                    System.out.println(wifi.getConnectionInfo().getSSID());
+                    System.out.println(isWiFi);
+                }while(!("\"" + routerName + "\"").equals(wifi.getConnectionInfo().getSSID()) && isWiFi);
 
+                int ipAddress = wifi.getConnectionInfo().getIpAddress();
+                String ip = String.format("%d.%d.%d.%d", (ipAddress & 0xff),(ipAddress >> 8 & 0xff),(ipAddress >> 16 & 0xff),(ipAddress >> 24 & 0xff));
+                ip = ip.substring(0, ip.lastIndexOf(".") + 1) + "255";
+
+                //Thread t = new Thread(new Client(ip));
+                Thread t = new Thread(new Client(ip));
+                t.start();
+                while(Client.result == null);
+                //t.interrupt();
+                System.out.println("erroreoroeroeor");
                 SharedPreferences preferences = getSharedPreferences("appData", MODE_PRIVATE);
                 if(preferences.getString(boardName.getText().toString() + "_IP", "") != ""){
                     AlertDialog.Builder builder = new AlertDialog.Builder(SelectBoardSetProperty.this);
                     builder.setMessage("이미 연결된 액자입니다");
                     builder.show();
                 }else{
+                    Intent intent = new Intent();
+                    System.out.println(boardName.getText().toString());
+                    intent.putExtra("boardName", boardName.getText().toString());
+                    setResult(1234, intent);
+
+                    System.out.println(Client.result);
+                    System.out.println(Client.result);
+                    System.out.println(Client.result);
+                    System.out.println(Client.result);
+                    System.out.println(Client.result);
+
                     SharedPreferences.Editor editor = appData.edit();
                     editor.putInt("NUMBER OF BOARD", SelectBoard.boardNum + 1);
                     editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString());
-                    editor.putString(Server.result, boardName.getText().toString() + "_IP");
+                    editor.putString(boardName.getText().toString() + "_IP", Client.result);
                     editor.putString(boardName.getText().toString() + "_PORT", "80");
                     editor.putString(boardName.getText().toString() + "_REST", "/signage/s00_signage.php");
                     editor.apply();
 
                     Toast.makeText(getApplicationContext(), s,Toast.LENGTH_LONG).show();
                     loading.dismiss();
+                    t.interrupt();
                     finish();
                 }
             }
 
             @Override
             protected String doInBackground(Void... params) {
+                System.out.println(12121);
+                System.out.println(router.getText().toString());
+                System.out.println(pwd.getText().toString());
+                System.out.println(12121);
+
                 property.add(new String[]{"ap", "\"" + router.getText().toString() + "\""});
                 property.add(new String[]{"pass", "\"" + pwd.getText().toString() + "\""});
-                String result = rh.sendPostRequest(UPLOAD_URL, property);
 
-                return result;
+                String result = "Error Registering";
+
+                try {
+                    result = rh.sendPostRequest(UPLOAD_URL, property);
+                    return result;
+                }catch (Exception e){
+                    return result;
+                }
+
             }
         }
 

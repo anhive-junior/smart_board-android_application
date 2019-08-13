@@ -15,7 +15,7 @@ import android.util.Log;
 public class Server implements Runnable {
     public static final String SERVERIP = "192.168.10.224"; // 'Within' the emulator!
 
-    public static final int SERVERPORT = 4000;
+    public static final int SERVERPORT = 4001;
 
     public static String result;
 
@@ -52,15 +52,11 @@ public class Server implements Runnable {
 
             while(true){
                 /* Receive the UDP-Packet */
-
                 socket.receive(packet);
-
 
                 Log.d("UDP", "S: Received: '" + new String(packet.getData()) + "'");
 
                 Log.d("UDP", "S: Done.");
-
-
 
                 InetAddress clientAddr = packet.getAddress();
                 result = packet.getAddress().toString();
@@ -69,6 +65,7 @@ public class Server implements Runnable {
                 result = temp.toString();
                 System.out.println(result);
 
+                /*
                 int clientPort = packet.getPort();
 
                 System.out.println(clientAddr);
@@ -78,17 +75,16 @@ public class Server implements Runnable {
 
                 buf = s.getBytes();
 
-                packet = new DatagramPacket(buf, buf.length, clientAddr, 4001);
+                packet = new DatagramPacket(buf, buf.length, clientAddr, SERVERPORT);
 
 
 
                 Log.d("UDP", "S: Sending: '" + new String(buf) + "'");
 
-                socket.send(packet);
+                socket.send(packet);*/
 
                 System.out.println("end");
             }
-
         } catch (Exception e) {
 
             Log.e("UDP", "S: Error", e);

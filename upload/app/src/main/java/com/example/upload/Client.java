@@ -1,73 +1,103 @@
 package com.example.upload;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
+
 import android.util.Log;
 
 
 
 public class Client implements Runnable {
+
+    private static String ip;
+
+    public static final int port = 4001;
+    public static final int recieveport = 4002;
+
+    public static String result = null;
+
+    Client(String ip){
+        this.ip = ip;
+    }
+
     @Override
-
     public void run() {
-
         // TODO Auto-generated method stub
 
-        try {
+        while (result == null) {
+            try {
+                // Retrieve the ServerName
 
-            // Retrieve the ServerName
+                InetAddress serverAddr = InetAddress.getByName(ip);
 
-            InetAddress serverAddr = InetAddress.getByName("192.168.10.255");
+                //Log.d("UDP", "C: Connecting...");
 
+                /* Create new UDP-Socket */
 
+                DatagramSocket socket = new DatagramSocket();
+                DatagramSocket socket1 = new DatagramSocket(recieveport);
 
-            Log.d("UDP", "C: Connecting...");
+                /* Prepare some data to be sent. */
 
-            /* Create new UDP-Socket */
+                byte[] buf = ("TESTTESTTEST").getBytes();
 
-            DatagramSocket socket = new DatagramSocket();
+                /* Create UDP-packet with
 
+                 * data & destination(url+port) */
 
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddr, port);
 
-            /* Prepare some data to be sent. */
+                //Log.d("UDP", "C: Sending: '" + new String(buf) + "'");
 
-            byte[] buf = ("TESTTESTTEST").getBytes();
+                /* Send out the packet */
 
+                socket.send(packet);
 
+                Log.d("UDP", "C: Sent.");
 
-            /* Create UDP-packet with
+                //Log.d("UDP", "C: Done.");
+                socket.close();
+                socket1.setSoTimeout(3000);
+                while(true){
+                    try{
+                        socket1.receive(packet);
+                        System.out.println(packet.getAddress());
 
-             * data & destination(url+port) */
+                        Log.d("UDP", "C: Received: '" + new String(packet.getData()) + "'");
 
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddr, 4000);
+                        InetAddress clientAddr = packet.getAddress();
+                        result = packet.getAddress().toString();
+                        System.out.println(result);
+                        String temp = result.substring(1);
+                        result = temp;
+                        System.out.println(result);
 
-            Log.d("UDP", "C: Sending: '" + new String(buf) + "'");
+                        int clientPort = packet.getPort();
 
+                        System.out.println(clientAddr);
+                        System.out.println(clientPort);
 
+                    }catch(SocketTimeoutException e){
+                        System.out.println(e);
+                        socket1.close();
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("out2");
 
-            /* Send out the packet */
+                //Log.e("UDP", "C: Error", e);
 
-            socket.send(packet);
-
-            Log.d("UDP", "C: Sent.");
-
-            Log.d("UDP", "C: Done.");
-
-
-
-            socket.receive(packet);
-
-            Log.d("UDP", "C: Received: '" + new String(packet.getData()) + "'");
-
-
-
-        } catch (Exception e) {
-
-            Log.e("UDP", "C: Error", e);
-
+            }
+            System.out.println("out");
         }
 
+    }
+
+    public static void test() throws IOException{
+        throw new IOException();
     }
 
 }

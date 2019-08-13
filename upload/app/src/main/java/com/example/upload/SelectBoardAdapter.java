@@ -7,15 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.TooManyListenersException;
 
 public class SelectBoardAdapter extends RecyclerView.Adapter<com.example.upload.SelectBoardAdapter.ItemRowHolder> {
 
@@ -77,7 +73,7 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<com.example.upload.
         itemRowHolder.itemTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(mContext, LoginTest.class);
+                intent = new Intent(mContext, Login.class);
                 System.out.println(itemRowHolder.itemTitle.getText().toString());
                 intent.putExtra("boardName", itemRowHolder.itemTitle.getText().toString());
                 mActivity.startActivity(intent);
