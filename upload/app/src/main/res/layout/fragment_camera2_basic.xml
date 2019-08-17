@@ -25,7 +25,7 @@
         android:layout_marginEnd="0dp"
         android:text="셀카" />
 
-    <com.example.upload.AutoFitTextureView
+    <com.example.upload.Camera.AutoFitTextureView
         android:id="@+id/texture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

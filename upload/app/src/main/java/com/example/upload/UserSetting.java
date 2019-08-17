@@ -7,11 +7,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.upload.Util.GlobalVar;
+import com.example.upload.Util.RequestHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,7 +78,6 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
                 varRest = edittextRest.getText().toString().trim();
 
                 ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
-                //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
                 loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
                 UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
                 UPLOAD_KEY = "login";
@@ -86,13 +87,9 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
         }
     }
 
-    // 설정값을 저장하는 함수
     private void save() {
-        // SharedPreferences 객체만으론 저장 불가능 Editor 사용
         SharedPreferences.Editor editor = appData.edit();
 
-        // 에디터객체.put타입( 저장시킬 이름, 저장시킬 값 )
-        // 저장시킬 이름이 이미 존재하면 덮어씌움
         editor.putString("ID", edittextID.getText().toString().trim());
         editor.putString("PWD", edittextPassword.getText().toString().trim());
         editor.putString("IP", edittextIP.getText().toString().trim());
@@ -100,14 +97,10 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
         editor.putString("REST", edittextRest.getText().toString().trim());
         editor.putString("KEY", UPLOAD_KEY.trim());
 
-        // apply, commit 을 안하면 변경된 내용이 저장되지 않음
         editor.apply();
     }
 
-    // 설정값을 불러오는 함수
     private void load() {
-        // SharedPreferences 객체.get타입( 저장된 이름, 기본값 )
-        // 저장된 이름이 존재하지 않을 시 기본값
         varID = appData.getString("ID", "");
         varPassword = appData.getString("PWD", "");
         UPLOAD_KEY = appData.getString("KEY", "");
@@ -116,7 +109,6 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
         varRest = appData.getString("REST", "");
 
         ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
-        //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
         loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
         UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
     }
@@ -135,7 +127,7 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
             @Override
             protected void onPostExecute(String s) {
                 loading.dismiss();
-                System.out.println(s);
+
                 //이상하게 여기만 String compare가 == 안되고 equals는됨
                 /*
                 String v = "login";
@@ -151,7 +143,7 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
 
                 if(s.equals("login")) {
                     save();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
+                    Intent intent = new Intent(getApplicationContext(), MainMenu.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
@@ -170,13 +162,7 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
 
                 String result = rh.sendPostRequest(address, property);
 
-                try{
-                    result = ParseJson(result);
-                }catch (Exception e){
-                    System.out.println(e);
-                }
-
-                return result;
+                return ParseJson(result);
             }
         }
 
@@ -186,7 +172,6 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
 
     public String ParseJson(String s){
         JSONObject jobject;
-        String error = s;
 
         try {
             jobject = new JSONObject(s);
@@ -195,8 +180,8 @@ public class UserSetting extends AppCompatActivity implements Button.OnClickList
             s = jobject.getString("mesg");
             return s;
         }catch (JSONException e){
-            System.out.println(e);
-            return error;
+            e.printStackTrace();
+            return e.getMessage();
         }
     }
 

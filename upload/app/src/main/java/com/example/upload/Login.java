@@ -1,13 +1,9 @@
 package com.example.upload;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -16,12 +12,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.upload.Util.GlobalVar;
+import com.example.upload.Util.Progress;
+import com.example.upload.Util.RequestHandler;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class Login extends AppCompatActivity implements Button.OnClickListener {
     public static String UPLOAD_URL;
@@ -35,83 +33,28 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
     private String varPassword;
     private CheckBox checkboxAutologin;
     private Progress progress;
-
     private SharedPreferences appData;//로그인정보 저장매체
     private boolean autoLogin;//자동로그인여부
-    Intent sendIntent;
     private Intent intent;
-    private WifiManager wifiManager;
     private String boardName;
-
     private String varIP;
     private String varPort;
     private String varRest;
-
-    void readWepConfig()
-    {
-        WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        List<WifiConfiguration> item = wifi.getConfiguredNetworks();
-        int i = item.size();
-        Log.d("WifiPreference", "NO OF CONFIG " + i );
-        Iterator<WifiConfiguration> iter =  item.iterator();
-        for(int j=0;j<i;j++){
-            WifiConfiguration config = item.get(j);
-            Log.d("WifiPreference", "SSID" + config.SSID);
-            Log.d("WifiPreference", "PASSWORD" + config.preSharedKey);
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         intent = getIntent();
 
         boardName = intent.getStringExtra("boardName");
-        /*
-        wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-        System.out.println(wifiManager.getWifiState());
-        System.out.println(" ");
-        System.out.println(wifiManager.getScanResults().get(0).SSID);
-        System.out.println(" ");
-
-
-        try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
-                NetworkInterface intf = en.nextElement();
-                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-                    InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
-                        System.out.println(inetAddress.getHostAddress());
-                    }
-                }
-            }
-        } catch (SocketException ex) {
-            ex.printStackTrace();
-        }
-
-
-        //readWepConfig();
-        System.out.println(wifiManager.getConfiguredNetworks());
-        System.out.println(" ");
-        System.out.println(wifiManager.getConnectionInfo());
-        System.out.println(" ");
-        System.out.println(wifiManager.getDhcpInfo());
-        System.out.println(" ");*/
-
-        /* GIve the Server some time for startup */
-
 
         // 설정값 불러오기
         appData = getSharedPreferences("appData", MODE_PRIVATE);
-        System.out.println(boardName);
-        System.out.println(1);
         load();
-        System.out.println(2);
 
         //자동로그인
         if(autoLogin) {
             login(loginUrl, UPLOAD_KEY, varID, varPassword);
-            //finish();//개발용주석처리
+            finish();
         }
 
         super.onCreate(savedInstanceState);
@@ -143,7 +86,6 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
                 varPassword = edittextPassword.getText().toString().trim();
 
                 ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
-                //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
                 loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
                 UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
                 UPLOAD_KEY = "login";
@@ -219,7 +161,7 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
 
                 if(s.equals("login")) {
                     save();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity2.class);
+                    Intent intent = new Intent(getApplicationContext(), MainMenu.class);
                     startActivity(intent);
                     finish();
                 }

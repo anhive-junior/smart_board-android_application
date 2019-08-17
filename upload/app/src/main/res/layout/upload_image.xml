@@ -6,7 +6,7 @@
     android:paddingTop="16dp"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:paddingBottom="16dp" tools:context=".UpLoadImage">
+    android:paddingBottom="16dp" tools:context=".UpLoadImage.UpLoadImage">
 
     <ImageView
         android:id="@+id/imageView"

@@ -20,7 +20,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
-        android:name=".GlobalVar"
+        android:name=".Util.GlobalVar"
         android:largeHeap="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,27 +29,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".CameraActivity"
+        <activity android:name=".Camera.CameraActivity"
             android:theme="@style/MaterialTheme"></activity>
-        <activity android:name=".MainActivity2"></activity>
-        <activity android:name=".UserSetting"></activity>
-        <activity android:name=".SelectBoard">
+        <activity android:name=".MainMenu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Login">
+        <activity android:name=".UserSetting"></activity>
+        <activity android:name=".SelectBoard.SelectBoard">
         </activity>
-        <activity android:name=".UpLoadImage"/>
-        <activity android:name=".ShowList"/>
-        <activity android:name=".ShowImage"/>
+        <activity android:name=".SelectBoard.SelectBoardInstall"/>
+        <activity android:name=".SelectBoard.SelectBoardRegister"/>
+        <activity android:name=".Login"/>
+        <activity android:name=".UpLoadImage.UpLoadImage"/>
+        <activity android:name=".ShowList.ShowList"/>
+        <activity android:name=".ShowList.ShowImage"/>
         <activity android:name=".ManageSlide"/>
         <activity android:name=".UpLoadVideo"/>
-        <activity android:name=".PlayWork"/>
-        <activity android:name=".Popup"
+        <activity android:name=".PlayWork.PlayWork"/>
+        <activity android:name=".PlayWork.Popup"
             android:theme="@style/popupTheme" android:screenOrientation="portrait"/>
-        <activity android:name=".SelectBoardSetProperty"/>
 
     </application>
 

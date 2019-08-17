@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.upload.Util.GlobalVar;
+import com.example.upload.Util.RequestHandler;
+
 import java.util.ArrayList;
 
 public class ManageSlide extends AppCompatActivity implements Button.OnClickListener{
@@ -26,7 +29,6 @@ public class ManageSlide extends AppCompatActivity implements Button.OnClickList
         property = new ArrayList<>();
         property.add(new String[]{"func", UPLOAD_KEY});
 
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_signage.php";
         UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/videolist.php";
 
         Button buttonPrevious = (Button) findViewById(R.id.button17);
@@ -131,18 +133,19 @@ public class ManageSlide extends AppCompatActivity implements Button.OnClickList
             @Override
             protected void onPostExecute(String s) {
                 loading.dismiss();
-                System.out.println(s);
-
-                Toast.makeText(getApplicationContext(), s,Toast.LENGTH_LONG).show();
+                if(s.equals("Error Registering")) {
+                    Toast.makeText(getApplicationContext(), "에러", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "성공",Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             protected String doInBackground(Bitmap... params) {
                 property.add(new String[]{"ctrl", msg});
 
-                String result = rh.sendPostRequest(UPLOAD_URL, property);
-
-                return result;
+                return rh.sendPostRequest(UPLOAD_URL, property);
             }
         }
 
