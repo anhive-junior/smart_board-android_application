@@ -15,9 +15,9 @@ import com.example.upload.UpLoadImage.UpLoadImage;
 
 public class MainMenu extends AppCompatActivity implements View.OnClickListener {
         private ImageButton buttonUpload;
-        private Button buttonList;
-        private Button buttonSlide;
-        private Button buttonCamera;;
+        private ImageButton buttonList;
+        private ImageButton buttonSlide;
+        private ImageButton buttonCamera;;
         private Button buttonUsersetting;
         private Button buttonSetting;
         private Intent intent;
@@ -30,10 +30,10 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
 
             buttonUsersetting = (Button) findViewById(R.id.usersetting);
             buttonSetting = (Button) findViewById(R.id.setting);
-            buttonCamera = (Button) findViewById(R.id.button_camera);
+            buttonCamera = (ImageButton) findViewById(R.id.button_camera);
             buttonUpload = (ImageButton) findViewById(R.id.button_upload);
-            buttonList = (Button) findViewById(R.id.button_list);
-            buttonSlide = (Button) findViewById(R.id.button_slide);
+            buttonList = (ImageButton) findViewById(R.id.button_list);
+            buttonSlide = (ImageButton) findViewById(R.id.button_slide);
 
             buttonUsersetting.setOnClickListener(this);
             buttonSetting.setOnClickListener(this);

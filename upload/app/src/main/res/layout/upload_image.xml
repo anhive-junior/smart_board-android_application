@@ -1,39 +1,73 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent" android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="16dp"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:paddingBottom="16dp" tools:context=".UpLoadImage.UpLoadImage">
+    android:background="@color/background"
+    android:paddingBottom="16dp">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="40"/>
-
-    <EditText
-        android:id="@+id/input_caption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/stroke"
-        android:hint="메모 입력"
         android:layout_weight="1"/>
 
-    <Button
-        android:id="@+id/buttonChoose"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="사진 선택"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/buttonUpload"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="업로드"
-        android:layout_weight="1"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:background="@color/background_caption">
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                app:srcCompat="@drawable/caption" />
+
+            <EditText
+                android:id="@+id/input_caption"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/background_caption"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/buttonChoose"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/choose_photo"
+                android:background="@color/background"
+                android:scaleType="fitXY"/>
+
+            <ImageButton
+                android:id="@+id/buttonUpload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/upload_image"
+                android:background="@color/background"
+                android:scaleType="fitXY"/>
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

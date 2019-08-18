@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -32,8 +33,8 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
     public static final String UPLOAD_KEY = "sendcard";
 
     private int PICK_IMAGE_REQUEST = 1;
-    private Button buttonChoose;
-    private Button buttonUpload;
+    private ImageButton buttonChoose;
+    private ImageButton buttonUpload;
     private EditText val_caption;
     private ImageView imageView;
     private Bitmap bitmap;
@@ -51,8 +52,8 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
         UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
         System.out.println(UPLOAD_URL);
 
-        buttonChoose = (Button) findViewById(R.id.buttonChoose);
-        buttonUpload = (Button) findViewById(R.id.buttonUpload);
+        buttonChoose = (ImageButton) findViewById(R.id.buttonChoose);
+        buttonUpload = (ImageButton) findViewById(R.id.buttonUpload);
         val_caption = (EditText) findViewById(R.id.input_caption);
 
         imageView = (ImageView) findViewById(R.id.imageView);

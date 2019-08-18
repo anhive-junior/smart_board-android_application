@@ -29,8 +29,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".Camera.CameraActivity"
-            android:theme="@style/MaterialTheme"></activity>
+        <activity android:name=".Camera.CameraActivity"/>
         <activity android:name=".MainMenu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
