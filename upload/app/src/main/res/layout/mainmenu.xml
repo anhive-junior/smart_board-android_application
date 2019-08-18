@@ -9,41 +9,13 @@
     android:paddingBottom="16dp"
     android:background="@color/background"
     tools:context=".MainMenu">
-    <LinearLayout
+
+    <ImageView
+        android:id="@+id/imageView2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="2">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/setting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="setting" />
-
-            <Button
-                android:id="@+id/usersetting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_weight="1"
-                android:text="usersetting" />
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:srcCompat="@drawable/mainmenu_top"/>
-
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:src="@drawable/mainmenu_top" />
 
     <LinearLayout
         android:layout_width="match_parent"

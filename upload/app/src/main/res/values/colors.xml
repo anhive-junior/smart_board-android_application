@@ -11,4 +11,9 @@
     <color name="transparent">#00000000</color>
     <color name="background">#74F4F4F4</color>
     <color name="background_caption">#FFFFFF</color>
+
+
+    <color name="gradientStart">#5AD0EA</color>
+    <color name="gradientEnd">#FF3f8bf5</color>
+
 </resources>

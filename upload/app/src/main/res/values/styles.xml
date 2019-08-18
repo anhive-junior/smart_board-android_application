@@ -17,6 +17,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="MainMenuTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    </style>
+
     <style name="MaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowFullscreen">true</item>
     </style>

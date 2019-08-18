@@ -30,7 +30,8 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".Camera.CameraActivity"/>
-        <activity android:name=".MainMenu">
+        <activity android:name=".MainMenu"
+            android:theme="@style/MainMenuTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
