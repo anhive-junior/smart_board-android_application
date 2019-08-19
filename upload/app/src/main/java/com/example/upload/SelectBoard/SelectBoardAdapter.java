@@ -1,7 +1,9 @@
 package com.example.upload.SelectBoard;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +51,30 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<SelectBoardAdapter.
                 intent = new Intent(mContext, Login.class);
                 intent.putExtra("boardName", itemRowHolder.itemTitle.getText().toString());
                 mActivity.startActivity(intent);
+            }
+        });
+
+        itemRowHolder.itemIcon.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("삭제하시겠습니까?");
+                builder.setPositiveButton("예",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dataList.remove(position);
+                                notifyDataSetChanged();
+                            }
+                        });
+                builder.setNegativeButton("아니오",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                builder.show();
+                return false;
             }
         });
     }

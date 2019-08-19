@@ -39,11 +39,16 @@ public class SelectBoard extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        boardList.add("1");
+        boardList.add("2");
+        boardList.add("3");
+        boardList.add("4");
+
         //boardNum = boardList.size();
 
         my_recycler_view = (RecyclerView) findViewById(R.id.my_recycler_view);
         //my_recycler_view.setHasFixedSize(true);
-        adapter = new SelectBoardAdapter(getApplicationContext(), SelectBoard.this, boardList);
+        adapter = new SelectBoardAdapter(this, SelectBoard.this, boardList);
         my_recycler_view.setLayoutManager(new GridLayoutManager(this, 2));
         my_recycler_view.setAdapter(adapter);
 
