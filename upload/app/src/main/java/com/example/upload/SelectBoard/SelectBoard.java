@@ -39,10 +39,6 @@ public class SelectBoard extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        boardList.add("test");
-        boardList.add("test");
-        boardList.add("test");
-        boardList.add("test");
         //boardNum = boardList.size();
 
         my_recycler_view = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -71,14 +67,9 @@ public class SelectBoard extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 1234 && requestCode == 1111) {
-            System.out.println(boardList);
             boardList.remove(boardList.size() - 1);
-            System.out.println(boardList);
-            System.out.println(data.getExtras());
             boardList.add(data.getStringExtra("boardName"));
-            System.out.println(boardList);
             adapter.notifyDataSetChanged();
-            Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_LONG).show();
         }
     }
 

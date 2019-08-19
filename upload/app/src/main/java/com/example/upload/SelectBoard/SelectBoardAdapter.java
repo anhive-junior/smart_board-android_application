@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -42,11 +43,10 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<SelectBoardAdapter.
         final String sectionName = dataList.get(position);
         itemRowHolder.itemTitle.setText(sectionName);
 
-        itemRowHolder.itemTitle.setOnClickListener(new View.OnClickListener() {
+        itemRowHolder.itemIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 intent = new Intent(mContext, Login.class);
-                System.out.println(itemRowHolder.itemTitle.getText().toString());
                 intent.putExtra("boardName", itemRowHolder.itemTitle.getText().toString());
                 mActivity.startActivity(intent);
             }
@@ -61,12 +61,12 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<SelectBoardAdapter.
     public class ItemRowHolder extends RecyclerView.ViewHolder {
 
         protected TextView itemTitle;
-        protected LinearLayout itemLayout;
+        protected ImageView itemIcon;
 
         public ItemRowHolder(View view) {
             super(view);
             this.itemTitle = (TextView) view.findViewById(R.id.board_name);
-            this.itemLayout = (LinearLayout) view.findViewById(R.id.selectboard_item);
+            this.itemIcon = (ImageView) view.findViewById(R.id.icon);
 
         }
 

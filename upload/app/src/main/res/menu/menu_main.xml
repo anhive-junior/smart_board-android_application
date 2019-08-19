@@ -2,8 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/board_register"
+        android:icon="@drawable/register"
         android:title="등록" />
     <item
         android:id="@+id/board_install"
+        android:icon="@drawable/install"
         android:title="설치"/>
 </menu>
