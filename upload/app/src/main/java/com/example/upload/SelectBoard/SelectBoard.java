@@ -39,11 +39,6 @@ public class SelectBoard extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        boardList.add("1");
-        boardList.add("2");
-        boardList.add("3");
-        boardList.add("4");
-
         //boardNum = boardList.size();
 
         my_recycler_view = (RecyclerView) findViewById(R.id.my_recycler_view);

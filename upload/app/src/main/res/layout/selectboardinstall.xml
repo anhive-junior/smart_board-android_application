@@ -43,6 +43,7 @@
         android:ems="10"
         android:hint="공유기 비밀번호"
         android:inputType="text"/>
+
     <Button
         android:id="@+id/button_set"
         android:layout_width="match_parent"

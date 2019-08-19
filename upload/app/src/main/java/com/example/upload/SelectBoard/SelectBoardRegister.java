@@ -35,6 +35,8 @@ public class SelectBoardRegister extends AppCompatActivity {
     private List<SelectBoardInstall.device> boardList = new ArrayList<>();
     private RecyclerView recyclerBoard;
     private TextView boardIP;
+    private TextView boardPort;
+    private TextView boardRest;
 
     @Override
     protected void onCreate(Bundle saveInstanceState){
@@ -44,7 +46,9 @@ public class SelectBoardRegister extends AppCompatActivity {
 
         setComplete = (Button) findViewById(R.id.button_set);
         boardIP = (TextView) findViewById(R.id.board_ip);
-        boardName = (EditText) findViewById(R.id.editText_board_name);
+        boardName = (EditText) findViewById(R.id.board_name);
+        boardPort = (EditText) findViewById(R.id.board_port);
+        boardRest = (EditText) findViewById(R.id.board_rest);
 
         wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         ipAddress = wifi.getConnectionInfo().getIpAddress();
@@ -86,16 +90,15 @@ public class SelectBoardRegister extends AppCompatActivity {
                         builder.show();
                     }else{
                         Intent intent = new Intent();
-                        System.out.println(boardName.getText().toString());
                         intent.putExtra("boardName", boardName.getText().toString());
                         setResult(1234, intent);
 
                         SharedPreferences.Editor editor = appData.edit();
                         editor.putInt("NUMBER OF BOARD", SelectBoard.boardNum + 1);
-                        editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString());
-                        editor.putString(boardName.getText().toString() + "_IP", boardIP.getText().toString());
-                        editor.putString(boardName.getText().toString() + "_PORT", "80");
-                        editor.putString(boardName.getText().toString() + "_REST", "/signage/s00_signage.php");
+                        editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString().trim());
+                        editor.putString(boardName.getText().toString() + "_IP", boardIP.getText().toString().trim());
+                        editor.putString(boardName.getText().toString() + "_PORT", boardPort.getText().toString().trim());
+                        editor.putString(boardName.getText().toString() + "_REST", boardRest.getText().toString().trim());
                         editor.apply();
 
                         loading.dismiss();
