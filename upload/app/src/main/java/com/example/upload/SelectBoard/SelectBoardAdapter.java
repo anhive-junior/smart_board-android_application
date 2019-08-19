@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,10 +61,12 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<SelectBoardAdapter.
     public class ItemRowHolder extends RecyclerView.ViewHolder {
 
         protected TextView itemTitle;
+        protected LinearLayout itemLayout;
 
         public ItemRowHolder(View view) {
             super(view);
             this.itemTitle = (TextView) view.findViewById(R.id.board_name);
+            this.itemLayout = (LinearLayout) view.findViewById(R.id.selectboard_item);
 
         }
 

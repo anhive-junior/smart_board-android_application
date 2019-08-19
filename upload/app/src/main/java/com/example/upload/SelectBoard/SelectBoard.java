@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.upload.R;
@@ -39,12 +40,15 @@ public class SelectBoard extends AppCompatActivity {
         }
 
         boardList.add("test");
+        boardList.add("test");
+        boardList.add("test");
+        boardList.add("test");
         //boardNum = boardList.size();
 
         my_recycler_view = (RecyclerView) findViewById(R.id.my_recycler_view);
         //my_recycler_view.setHasFixedSize(true);
         adapter = new SelectBoardAdapter(getApplicationContext(), SelectBoard.this, boardList);
-        my_recycler_view.setLayoutManager(new GridLayoutManager(this, 3));
+        my_recycler_view.setLayoutManager(new GridLayoutManager(this, 2));
         my_recycler_view.setAdapter(adapter);
 
         FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.fab_speed_dial);

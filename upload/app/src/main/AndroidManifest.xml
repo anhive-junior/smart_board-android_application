@@ -32,13 +32,13 @@
         <activity android:name=".Camera.CameraActivity"/>
         <activity android:name=".MainMenu"
             android:theme="@style/MainMenuTheme">
+        </activity>
+        <activity android:name=".UserSetting"></activity>
+        <activity android:name=".SelectBoard.SelectBoard">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".UserSetting"></activity>
-        <activity android:name=".SelectBoard.SelectBoard">
         </activity>
         <activity android:name=".SelectBoard.SelectBoardInstall"/>
         <activity android:name=".SelectBoard.SelectBoardRegister"/>
