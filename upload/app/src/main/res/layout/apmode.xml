@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <EditText
+        android:id="@+id/board_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="액자 이름"
+        android:text="Local"
+        android:inputType="textPersonName"/>
+
+    <EditText
+        android:id="@+id/board_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="80"
+        android:hint="PORT"
+        android:inputType="number|text"/>
+
+    <EditText
+        android:id="@+id/board_rest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="/signage/s00_signage.php"
+        android:hint="경로"
+        android:inputType="text"/>
+
+    <Button
+        android:id="@+id/button_set"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="설정 완료" />
+
+</LinearLayout>

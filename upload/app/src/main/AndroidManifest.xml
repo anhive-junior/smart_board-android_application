@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.upload">
-
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -48,6 +45,11 @@
         <activity android:name=".ShowList.ShowImage"/>
         <activity android:name=".ManageSlide"/>
         <activity android:name=".UpLoadVideo"/>
+
+        <activity android:name=".Tutorial">
+        </activity>
+        <activity android:name=".SelectBoard.APmode"/>
+        <activity android:name=".SelectBoard.Wiredmode"/>
         <activity android:name=".PlayWork.PlayWork"/>
         <activity android:name=".PlayWork.Popup"
             android:theme="@style/popupTheme" android:screenOrientation="portrait"/>

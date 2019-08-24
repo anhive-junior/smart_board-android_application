@@ -8,4 +8,7 @@
         android:id="@+id/board_install"
         android:icon="@drawable/install"
         android:title="설치"/>
+    <item
+        android:id="@+id/board_tutorial"
+        android:title="튜토리얼"/>
 </menu>

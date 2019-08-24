@@ -1,7 +1,10 @@
 package com.example.upload.SelectBoard;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -12,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.upload.R;
+import com.example.upload.Tutorial;
 
 import java.util.ArrayList;
 
@@ -49,14 +53,40 @@ public class SelectBoard extends AppCompatActivity {
 
         FabSpeedDial fabSpeedDial = (FabSpeedDial) findViewById(R.id.fab_speed_dial);
 
-
         fabSpeedDial.setMenuListener(new SimpleMenuListenerAdapter() {
             @Override
             public boolean onMenuItemSelected(MenuItem menuItem) {
                 //TODO: Start some activity
-                if(menuItem.getTitle().toString().equals("설치")) intent = new Intent(getApplicationContext(), SelectBoardInstall.class);
-                else intent = new Intent(getApplicationContext(), SelectBoardRegister.class);
-                startActivity(intent);
+                if(menuItem.getTitle().toString().equals("설치")) {
+                    intent = new Intent(getApplicationContext(), SelectBoardInstall.class);
+                    startActivity(intent);
+                }
+                else if(menuItem.getTitle().toString().equals("튜토리얼")){
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/anhive-junior/smart-board/wiki/Tutorial"));
+                    intent.setPackage("com.android.chrome");
+                    startActivity(intent);
+                }
+                else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SelectBoard.this);
+                    builder.setTitle("어떤 모드인가요?");
+                    builder.setPositiveButton("AP모드",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    intent = new Intent(getApplicationContext(), APmode.class);
+                                    startActivityForResult(intent, 1111);
+                                }
+                            });
+                    builder.setNegativeButton("유선모드",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    intent = new Intent(getApplicationContext(), Wiredmode.class);
+                                    startActivityForResult(intent, 1111);
+                                }
+                            });
+                    builder.show();
+                }
                 return false;
             }
         });
@@ -67,7 +97,6 @@ public class SelectBoard extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 1234 && requestCode == 1111) {
-            boardList.remove(boardList.size() - 1);
             boardList.add(data.getStringExtra("boardName"));
             adapter.notifyDataSetChanged();
         }
