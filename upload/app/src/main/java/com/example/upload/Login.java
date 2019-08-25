@@ -86,8 +86,8 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
                 varPassword = edittextPassword.getText().toString().trim();
 
                 ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
-                loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
-                UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
+                loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest() + "/signage/s00_login.php";
+                UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest() + "/signage/s00_signage.php";
                 UPLOAD_KEY = "login";
 
                 login(loginUrl, UPLOAD_KEY, varID, varPassword);
