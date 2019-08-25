@@ -98,7 +98,7 @@ public class SelectBoardRegister extends AppCompatActivity {
                         editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString().trim());
                         editor.putString(boardName.getText().toString() + "_IP", boardIP.getText().toString().trim());
                         editor.putString(boardName.getText().toString() + "_PORT", boardPort.getText().toString().trim());
-                        editor.putString(boardName.getText().toString() + "_REST", boardRest.getText().toString().trim() + "/signage/s00_signage.php");
+                        editor.putString(boardName.getText().toString() + "_REST", boardRest.getText().toString().trim());
                         editor.apply();
 
                         loading.dismiss();
