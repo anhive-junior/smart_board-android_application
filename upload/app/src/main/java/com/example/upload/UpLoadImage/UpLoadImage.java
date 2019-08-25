@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.upload.Login;
 import com.example.upload.Util.GlobalVar;
 import com.example.upload.Util.Progress;
 import com.example.upload.R;
@@ -49,7 +50,7 @@ public class UpLoadImage extends AppCompatActivity implements Button.OnClickList
         setContentView(R.layout.upload_image);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
+        UPLOAD_URL = Login.UPLOAD_URL;
         System.out.println(UPLOAD_URL);
 
         buttonChoose = (ImageButton) findViewById(R.id.buttonChoose);

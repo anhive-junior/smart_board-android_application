@@ -473,7 +473,6 @@ public class Camera2BasicFragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        //UPLOAD_URL = ((GlobalVar)getActivity().getApplication()).getMyAddr() + "/signage/s00_signage.php";
         UPLOAD_URL = Login.UPLOAD_URL;
         System.out.println(2);
         final Button picture = (Button)getActivity().findViewById(R.id.picture);

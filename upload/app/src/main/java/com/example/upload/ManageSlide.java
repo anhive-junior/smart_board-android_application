@@ -29,7 +29,7 @@ public class ManageSlide extends AppCompatActivity implements Button.OnClickList
         property = new ArrayList<>();
         property.add(new String[]{"func", UPLOAD_KEY});
 
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/videolist.php";
+        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest() + "/signage/videolist.php";
 
         Button buttonPrevious = (Button) findViewById(R.id.button17);
         Button buttonPlayhold = (Button) findViewById(R.id.button16);

@@ -43,6 +43,7 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        progress = new Progress(Login.this, Login.this, 0, 50);
         intent = getIntent();
 
         boardName = intent.getStringExtra("boardName");
@@ -67,9 +68,6 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
         edittextID = (EditText) findViewById(R.id.editText_id);
         edittextPassword = (EditText) findViewById(R.id.editText_password);
 
-        progress = new Progress(Login.this, Login.this, 0, 50);
-
-        progress.show();
         // 이전에 로그인 정보를 저장시킨 기록이 있다면
         if (autoLogin) {
             edittextID.setText(varID);
@@ -90,6 +88,7 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
                 UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest() + "/signage/s00_signage.php";
                 UPLOAD_KEY = "login";
 
+                progress.show();
                 login(loginUrl, UPLOAD_KEY, varID, varPassword);
                 break ;
         }
@@ -126,8 +125,8 @@ public class Login extends AppCompatActivity implements Button.OnClickListener {
 
         ((GlobalVar)this.getApplication()).setMyAddr(varIP, varPort, varRest);
         //UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
-        loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + "/signage/s00_login.php";
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
+        loginUrl = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest() + "/signage/s00_login.php";
+        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest() + "/signage/s00_signage.php";
         System.out.println(loginUrl);
         System.out.println(UPLOAD_URL);
         System.out.println(varRest);

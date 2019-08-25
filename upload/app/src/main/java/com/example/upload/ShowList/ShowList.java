@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.upload.Login;
 import com.example.upload.Util.GlobalVar;
 import com.example.upload.Util.Progress;
 import com.example.upload.R;
@@ -49,7 +50,7 @@ public class ShowList extends AppCompatActivity implements DataTransferInterface
 
         progress = new Progress(ShowList.this, ShowList.this, 0, 50);
 
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
+        UPLOAD_URL = Login.UPLOAD_URL;
         showlist(property);
     }
 

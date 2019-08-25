@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.upload.Login;
 import com.example.upload.Util.GlobalVar;
 import com.example.upload.R;
 import com.example.upload.Util.RequestHandler;
@@ -34,7 +35,7 @@ public class PlayWork extends AppCompatActivity implements Button.OnClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playwork);
-        UPLOAD_URL = ((GlobalVar)this.getApplication()).getMyAddr() + ((GlobalVar)this.getApplication()).getMyRest();
+        UPLOAD_URL = Login.UPLOAD_URL;
         playworkdata = new HashMap<>();
         property = new ArrayList<>();
 

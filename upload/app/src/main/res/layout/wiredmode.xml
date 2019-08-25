@@ -25,14 +25,14 @@
         android:ems="10"
         android:text="80"
         android:hint="PORT"
-        android:inputType="number|text"/>
+        android:inputType="text"/>
 
     <EditText
         android:id="@+id/board_rest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:text="/signage/s00_signage.php"
+        android:text=""
         android:hint="경로"
         android:inputType="text"/>
 
