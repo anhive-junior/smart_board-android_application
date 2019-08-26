@@ -94,8 +94,8 @@ public class SelectBoardRegister extends AppCompatActivity {
                         setResult(1234, intent);
 
                         SharedPreferences.Editor editor = appData.edit();
-                        editor.putInt("NUMBER OF BOARD", SelectBoard.boardNum + 1);
-                        editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString().trim());
+//                        editor.putInt("NUMBER OF BOARD", SelectBoard.boardNum + 1);
+//                        editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString().trim());
                         editor.putString(boardName.getText().toString() + "_IP", boardIP.getText().toString().trim());
                         editor.putString(boardName.getText().toString() + "_PORT", boardPort.getText().toString().trim());
                         editor.putString(boardName.getText().toString() + "_REST", boardRest.getText().toString().trim());

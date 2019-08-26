@@ -29,7 +29,6 @@ public class APmode extends AppCompatActivity {
 
     private SharedPreferences appData;//로그인정보 저장매체
 
-    private List<SelectBoardInstall.device> boardList = new ArrayList<>();
     private TextView boardIP;
     private TextView boardPort;
     private TextView boardRest;
@@ -67,8 +66,8 @@ public class APmode extends AppCompatActivity {
                         setResult(1234, intent);
 
                         SharedPreferences.Editor editor = appData.edit();
-                        editor.putInt("NUMBER OF BOARD", SelectBoard.boardNum + 1);
-                        editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString().trim());
+//                        editor.putInt("NUMBER OF BOARD", SelectBoard.boardNum + 1);
+//                        editor.putString("BOARD_" + (SelectBoard.boardNum + 1), boardName.getText().toString().trim());
                         editor.putString(boardName.getText().toString() + "_IP", "192.168.201.1");
                         editor.putString(boardName.getText().toString() + "_PORT", boardPort.getText().toString().trim());
                         editor.putString(boardName.getText().toString() + "_REST", boardRest.getText().toString().trim());

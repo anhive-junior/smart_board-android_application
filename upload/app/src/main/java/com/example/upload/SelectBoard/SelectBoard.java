@@ -18,6 +18,10 @@ import com.example.upload.R;
 import com.example.upload.Tutorial;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import io.github.yavski.fabspeeddial.FabSpeedDial;
 import io.github.yavski.fabspeeddial.SimpleMenuListenerAdapter;
@@ -27,15 +31,17 @@ public class SelectBoard extends AppCompatActivity {
     private SelectBoardAdapter adapter;
     private SharedPreferences appData;
     private Intent intent;
-
-    public static int boardNum = 0;
-    public static ArrayList<String> boardList;
+    public static Set<String> savedList;
+    public static List<String> boardList;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.selectboard);
         appData = getSharedPreferences("appData", MODE_PRIVATE);
+        editor = appData.edit();
+        savedList = new HashSet<>();
         boardList = new ArrayList<>();
         try{
             load();
@@ -43,7 +49,6 @@ public class SelectBoard extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //boardNum = boardList.size();
 
         my_recycler_view = (RecyclerView) findViewById(R.id.my_recycler_view);
         //my_recycler_view.setHasFixedSize(true);
@@ -98,6 +103,9 @@ public class SelectBoard extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 1234 && requestCode == 1111) {
             boardList.add(data.getStringExtra("boardName"));
+            savedList.add(data.getStringExtra("boardName"));
+            editor.putStringSet("list", savedList);
+            editor.commit();
             adapter.notifyDataSetChanged();
         }
     }
@@ -106,12 +114,13 @@ public class SelectBoard extends AppCompatActivity {
     private void load() {
         // SharedPreferences 객체.get타입( 저장된 이름, 기본값 )
         // 저장된 이름이 존재하지 않을 시 기본값
-        boardNum = appData.getInt("NUMBER OF BOARD", 0);
-        System.out.println(boardNum);
-        boardList = new ArrayList<>();
-        for(int i=1;i<=boardNum;i++){
-            boardList.add(appData.getString("BOARD_" + i, ""));
+        savedList = appData.getStringSet("list", savedList);
+        for(String i:savedList){
+            boardList.add(i);
         }
+//        for(int i=1;i<=boardNum;i++){
+//            boardList.add(appData.getString("BOARD_" + i, ""));
+//        }
     }
 
 }

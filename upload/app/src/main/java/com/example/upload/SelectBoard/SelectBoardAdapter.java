@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +19,26 @@ import com.example.upload.Login;
 import com.example.upload.R;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.upload.SelectBoard.SelectBoard.savedList;
 
 public class SelectBoardAdapter extends RecyclerView.Adapter<SelectBoardAdapter.ItemRowHolder> {
 
-    private ArrayList<String> dataList;
+    private List<String> dataList;
     private Context mContext;
     private Activity mActivity;
     private Intent intent;
+    private SharedPreferences appData;
+    private SharedPreferences.Editor editor;
 
-    public SelectBoardAdapter(Context context, Activity activity, ArrayList<String> dataList) {
+    public SelectBoardAdapter(Context context, Activity activity, List<String> dataList) {
         this.dataList = dataList;
         this.mContext = context;
         this.mActivity = activity;
+        appData = mContext.getSharedPreferences("appData", MODE_PRIVATE);
+        editor = appData.edit();
     }
 
     @Override
@@ -63,6 +72,13 @@ public class SelectBoardAdapter extends RecyclerView.Adapter<SelectBoardAdapter.
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                editor.remove(sectionName);
+                                editor.remove(sectionName + "_IP");
+                                editor.remove(sectionName + "_PORT");
+                                editor.remove(sectionName + "_REST");
+                                savedList.remove(sectionName);
+                                editor.putStringSet("list", savedList);
+                                editor.commit();
                                 dataList.remove(position);
                                 notifyDataSetChanged();
                             }
