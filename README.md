@@ -69,6 +69,7 @@ find . -name "*.php" -exec sed -i 's/\t/    /g'  {} +
 * **Sangha Lee** - *github, @toriato*-
 * **Yonghoon Jung** - *github, @dydgns2017* -
 * **Yongsoo Han** - *github, @ilovecho* -
+* **Jeeyeon Lee** - 
 
 ## 라이센스 (License)
 
